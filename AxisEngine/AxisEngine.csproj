@@ -64,7 +64,6 @@
     <Compile Include="Physics\TimeManager.cs" />
     <Compile Include="Physics\Trigger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TESTCLASS.cs" />
     <Compile Include="UserInput\Input.cs" />
     <Compile Include="UserInput\MouseButtons.cs" />
     <Compile Include="Visuals\Animation.cs" />
