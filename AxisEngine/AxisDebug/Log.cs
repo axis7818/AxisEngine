@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Windows.Controls;
 using System.Windows;
 using System.Windows.Documents;
-using System.Threading.Tasks;
 
 namespace AxisEngine.Debug
 {

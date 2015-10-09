@@ -153,7 +153,7 @@ namespace AxisEngine
             set
             {
                 _owner = value;
-                if(_owner != null)
+                if (_owner != null)
                 {
                     _owner.AddComponent(this);
                 }
@@ -304,7 +304,7 @@ namespace AxisEngine
             if (!Components.Contains(component))
             {
                 Components.Add(component);
-                if(component.Owner != this)
+                if (component.Owner != this)
                 {
                     component.Owner = this;
                 }
