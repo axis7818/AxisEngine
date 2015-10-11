@@ -79,37 +79,44 @@ namespace AxisEngine.Physics
         /// <param name="other">the other trigger to check for an intersection with</param>
         public bool Intersects(Trigger other)
         {
-            /* Old implementation */
-            //// check if the outer bounds intersect. If they do, continue checking. otherwise, return false
-            //if (!this.Bounds.Intersects(other.Bounds))
-            //    return false;
+            // get the bounding rectangles
+            Rectangle thisBounds = Bounds;
+            Rectangle otherBounds = other.Bounds;
 
-            //// compare rectangles with rectangles
-            //foreach (Rectangle R in Rectangles)
-            //    foreach (Rectangle r in other.Rectangles)
-            //        if (R.Intersects(r))
-            //            return true;
+            // if the bounds dont intersect, then return false
+            if (!thisBounds.Intersects(otherBounds))
+                return false;
 
-            //// compare circles with circles
-            //foreach (Circle C in Circles)
-            //    foreach (Circle c in other.Circles)
-            //        if (C.Intersects(c))
-            //            return true;
+            if (IsSimple)
+            {
+                if (other.IsSimple)
+                {
+                    // both are simple
+                    return true;
+                }
+                else
+                {
+                    // this one is simple
+                    return other.Rectangles.Any(r => thisBounds.Intersects(r)) || other.Circles.Any(c => CollisionManager.Collides(thisBounds, c));
+                }
+            }
+            else
+            {
+                if (other.IsSimple)
+                {
+                    // other is simple
+                    return Rectangles.Any(r => otherBounds.Intersects(r)) || Circles.Any(c => CollisionManager.Collides(otherBounds, c));
+                }
+                else
+                {
+                    // both aren't simple
+                    return Rectangles.Any(R => other.Rectangles.Any(r => R.Intersects(r) ||     // compare these rectangles with those rectangles
+                        other.Circles.Any(c => CollisionManager.Collides(R, c)))) ||            // compare these rectangles with those circles
+                        Circles.Any(C => other.Circles.Any(c => C.Intersects(c)) ||             // compare these circles with those circles
+                        other.Rectangles.Any(r => CollisionManager.Collides(r, C)));            // compare these circles with those rectangles
 
-            //// compare rectangles with circles
-            //foreach (Rectangle R in Rectangles)
-            //    foreach (Circle c in other.Circles)
-            //        if (CollisionManager.Collides(R, c))
-            //            return true;
-
-            //// compare circles with rectangles
-            //foreach (Circle C in Circles)
-            //    foreach (Rectangle r in other.Rectangles)
-            //        if (CollisionManager.Collides(r, C))
-            //            return true;
-
-            //// return false if all else fails
-            //return false;
+                }
+            }
         }
     }
 }
