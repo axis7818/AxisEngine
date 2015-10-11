@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 
 namespace AxisEngine.Physics
@@ -82,36 +79,37 @@ namespace AxisEngine.Physics
         /// <param name="other">the other trigger to check for an intersection with</param>
         public bool Intersects(Trigger other)
         {
-            // check if the outer bounds intersect. If they do, continue checking. otherwise, return false
-            if (!this.Bounds.Intersects(other.Bounds))
-                return false;
+            /* Old implementation */
+            //// check if the outer bounds intersect. If they do, continue checking. otherwise, return false
+            //if (!this.Bounds.Intersects(other.Bounds))
+            //    return false;
 
-            // compare rectangles with rectangles
-            foreach (Rectangle R in Rectangles)
-                foreach (Rectangle r in other.Rectangles)
-                    if (R.Intersects(r))
-                        return true;
+            //// compare rectangles with rectangles
+            //foreach (Rectangle R in Rectangles)
+            //    foreach (Rectangle r in other.Rectangles)
+            //        if (R.Intersects(r))
+            //            return true;
 
-            // compare circles with circles
-            foreach (Circle C in Circles)
-                foreach (Circle c in other.Circles)
-                    if (C.Intersects(c))
-                        return true;
+            //// compare circles with circles
+            //foreach (Circle C in Circles)
+            //    foreach (Circle c in other.Circles)
+            //        if (C.Intersects(c))
+            //            return true;
 
-            // compare rectangles with circles
-            foreach (Rectangle R in Rectangles)
-                foreach (Circle c in other.Circles)
-                    if (CollisionManager.Collides(R, c))
-                        return true;
+            //// compare rectangles with circles
+            //foreach (Rectangle R in Rectangles)
+            //    foreach (Circle c in other.Circles)
+            //        if (CollisionManager.Collides(R, c))
+            //            return true;
 
-            // compare circles with rectangles
-            foreach (Circle C in Circles)
-                foreach (Rectangle r in other.Rectangles)
-                    if (CollisionManager.Collides(r, C))
-                        return true;
+            //// compare circles with rectangles
+            //foreach (Circle C in Circles)
+            //    foreach (Rectangle r in other.Rectangles)
+            //        if (CollisionManager.Collides(r, C))
+            //            return true;
 
-            // return false if all else fails
-            return false;
+            //// return false if all else fails
+            //return false;
         }
     }
 }
