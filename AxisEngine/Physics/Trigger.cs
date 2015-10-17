@@ -76,12 +76,12 @@ namespace AxisEngine.Physics
         /// <summary>
         /// returns true if the triggers intersect.
         /// </summary>
-        /// <param name="other">the other trigger to check for an intersection with</param>
-        public bool Intersects(Trigger other)
+        /// <param name="trigger">the other trigger to check for an intersection with</param>
+        public bool Intersects(Trigger trigger)
         {
             // get the bounding rectangles
             Rectangle thisBounds = Bounds;
-            Rectangle otherBounds = other.Bounds;
+            Rectangle otherBounds = trigger.Bounds;
 
             // if the bounds dont intersect, then return false
             if (!thisBounds.Intersects(otherBounds))
@@ -89,7 +89,7 @@ namespace AxisEngine.Physics
 
             if (IsSimple)
             {
-                if (other.IsSimple)
+                if (trigger.IsSimple)
                 {
                     // both are simple
                     return true;
@@ -97,12 +97,12 @@ namespace AxisEngine.Physics
                 else
                 {
                     // this one is simple
-                    return other.Rectangles.Any(r => thisBounds.Intersects(r)) || other.Circles.Any(c => CollisionManager.Collides(thisBounds, c));
+                    return trigger.Rectangles.Any(r => thisBounds.Intersects(r)) || trigger.Circles.Any(c => CollisionManager.Collides(thisBounds, c));
                 }
             }
             else
             {
-                if (other.IsSimple)
+                if (trigger.IsSimple)
                 {
                     // other is simple
                     return Rectangles.Any(r => otherBounds.Intersects(r)) || Circles.Any(c => CollisionManager.Collides(otherBounds, c));
@@ -110,10 +110,10 @@ namespace AxisEngine.Physics
                 else
                 {
                     // both aren't simple
-                    return Rectangles.Any(R => other.Rectangles.Any(r => R.Intersects(r) ||     // compare these rectangles with those rectangles
-                        other.Circles.Any(c => CollisionManager.Collides(R, c)))) ||            // compare these rectangles with those circles
-                        Circles.Any(C => other.Circles.Any(c => C.Intersects(c)) ||             // compare these circles with those circles
-                        other.Rectangles.Any(r => CollisionManager.Collides(r, C)));            // compare these circles with those rectangles
+                    return Rectangles.Any(R => trigger.Rectangles.Any(r => R.Intersects(r) ||     // compare these rectangles with those rectangles
+                        trigger.Circles.Any(c => CollisionManager.Collides(R, c)))) ||            // compare these rectangles with those circles
+                        Circles.Any(C => trigger.Circles.Any(c => C.Intersects(c)) ||             // compare these circles with those circles
+                        trigger.Rectangles.Any(r => CollisionManager.Collides(r, C)));            // compare these circles with those rectangles
 
                 }
             }

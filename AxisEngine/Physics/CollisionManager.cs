@@ -26,6 +26,11 @@ namespace AxisEngine.Physics
         private List<ICollisionManageable> ToManage;
 
         /// <summary>
+        /// the triggers to manage
+        /// </summary>
+        private List<Trigger> Triggers;
+
+        /// <summary>
         /// instantiates a Collision manager
         /// </summary>
         public CollisionManager()
@@ -34,6 +39,7 @@ namespace AxisEngine.Physics
             UpdateOrder = 0;
 
             ToManage = new List<ICollisionManageable>();
+            Triggers = new List<Trigger>();
         }
 
         /// <summary>
@@ -151,12 +157,24 @@ namespace AxisEngine.Physics
         /// Adds an ICollisionManageable to the Collision manager
         /// </summary>
         /// <param name="collisionManageable">the ICollisionManageable to add</param>
-        public void Add(ICollisionManageable collisionManageable)
+        public void AddCollisionManageable(ICollisionManageable collisionManageable)
         {
             if (!ToManage.Contains(collisionManageable))
                 ToManage.Add(collisionManageable);
             else
                 throw new ArgumentException("collisionManageable already exists in the manager.");
+        }
+
+        /// <summary>
+        /// Adds a Trigger to the Collision Manager
+        /// </summary>
+        /// <param name="trigger"></param>
+        public void AddTrigger(Trigger trigger)
+        {
+            if (!Triggers.Contains(trigger))
+                Triggers.Add(trigger);
+            else
+                throw new ArgumentException("trigger already exists in the manager.");
         }
 
         /// <summary>
@@ -166,6 +184,15 @@ namespace AxisEngine.Physics
         public bool Contains(ICollisionManageable coll)
         {
             return ToManage.Contains(coll);
+        }
+
+        /// <summary>
+        /// whether or not the collision manager contains the trigger
+        /// </summary>
+        /// <param name="trigger">the trigger to check for</param>
+        public bool Contains(Trigger trigger)
+        {
+            return Triggers.Contains(trigger);
         }
 
         /// <summary>
@@ -180,12 +207,32 @@ namespace AxisEngine.Physics
         }
 
         /// <summary>
+        /// enumerates the Triggers in the collision manager
+        /// </summary>
+        public IEnumerator GetEnumeratedTriggers()
+        {
+            foreach(Trigger trig in Triggers)
+            {
+                yield return trig;
+            }
+        }
+
+        /// <summary>
         /// removes an ICollisionManageable from the Collision manager
         /// </summary>
         /// <param name="coll">the ICollisionManager to remove</param>
         public void Remove(ICollisionManageable coll)
         {
             ToManage.Remove(coll);
+        }
+
+        /// <summary>
+        /// removes a trigger from the Collision Manager
+        /// </summary>
+        /// <param name="trigger">the trigger to remove</param>
+        public void Remove(Trigger trigger)
+        {
+            Triggers.Remove(trigger);
         }
 
         /// <summary>
@@ -197,6 +244,7 @@ namespace AxisEngine.Physics
             if (Enabled)
             {
                 /* TODO: On Updating, make sure to undo any force on a Body that might push objects into eachother. */
+                /* TODO: On Updating, make sure to check for overlaps with triggers. */
             }
         }
     }

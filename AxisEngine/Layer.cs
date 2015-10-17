@@ -263,7 +263,9 @@ namespace AxisEngine
         {
             // subscribe this object
             if (worldObject is ICollisionManageable)
-                CollisionManager.Add(worldObject as ICollisionManageable);
+                CollisionManager.AddCollisionManageable(worldObject as ICollisionManageable);
+            else if (worldObject is Trigger)
+                CollisionManager.AddTrigger(worldObject as Trigger);
             else if (worldObject is IDrawManageable)
                 DrawManager.AddDrawable(worldObject as IDrawManageable);
 
@@ -286,6 +288,12 @@ namespace AxisEngine
                 ICollisionManageable coll = worldObject as ICollisionManageable;
                 if (CollisionManager.Contains(coll))
                     CollisionManager.Remove(coll);
+            }
+            else if(worldObject is Trigger)
+            {
+                Trigger trig = worldObject as Trigger;
+                if (CollisionManager.Contains(trig))
+                    CollisionManager.Remove(trig);
             }
             else if (worldObject is IDrawManageable)
             {
