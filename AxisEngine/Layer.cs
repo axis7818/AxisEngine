@@ -267,7 +267,7 @@ namespace AxisEngine
                 DrawManager.AddDrawable(worldObject as IDrawManageable);
 
             // subscribe components recursively
-            foreach(WorldObject wo in worldObject.GetComponents())
+            foreach (WorldObject wo in worldObject.GetComponents())
             {
                 SubscribeToManagers(wo);
             }
@@ -283,8 +283,8 @@ namespace AxisEngine
             if (worldObject is ICollisionManageable)
             {
                 ICollisionManageable coll = worldObject as ICollisionManageable;
-                if(CollisionManager.Contains(coll))
-                    CollisionManager.Remove(coll);  
+                if (CollisionManager.Contains(coll))
+                    CollisionManager.Remove(coll);
             }
             else if (worldObject is IDrawManageable)
             {
@@ -294,7 +294,7 @@ namespace AxisEngine
             }
 
             // unsubscribe the components recursively
-            foreach(WorldObject wo in worldObject.GetComponents())
+            foreach (WorldObject wo in worldObject.GetComponents())
             {
                 UnsubscribeFromManagers(wo);
             }

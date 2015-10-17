@@ -6,7 +6,5 @@
     public interface ICollisionManageable
     {
         //TODO: Implement ICollisionManageable
-
-
     }
 }
