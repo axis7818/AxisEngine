@@ -5,6 +5,10 @@
     /// </summary>
     public interface ICollisionManageable
     {
-        //TODO: Implement ICollisionManageable
+        /// <summary>
+        /// checks whether or not there is an overlap with a trigger
+        /// </summary>
+        /// <param name="trigger">the trigger to check for overlap with</param>
+        bool Intersects(Trigger trigger);
     }
 }
