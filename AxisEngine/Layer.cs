@@ -163,7 +163,7 @@ namespace AxisEngine
         public void RemoveRange(int index, int count)
         {
             for (int i = 0; i < count; i++)
-                RemoveAt(index + i);
+                RemoveAt(index);
         }
 
         /// <summary>
@@ -174,10 +174,11 @@ namespace AxisEngine
         {
             if (Enabled)
             {
+                // get the converted time
                 GameTime scaledTime = TimeManager.ConvertTime(t);
 
+                // update the objects in the layer
                 UpdateThis(scaledTime);
-
                 foreach (WorldObject x in WorldObjects)
                     x.Update(scaledTime);
             }
