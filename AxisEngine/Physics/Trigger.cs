@@ -83,8 +83,11 @@ namespace AxisEngine.Physics
                 return false;
 
             // if there are any collisions with the circles or rectangles
-            return Rectangles.Any(rec => CollisionManager.Collides(rec, r)) ||
-                Circles.Any(cir => CollisionManager.Collides(r, cir));
+            if (Rectangles.Any(rec => CollisionManager.Collides(rec, r)))
+                return true;
+            if (Circles.Any(cir => CollisionManager.Collides(r, cir)))
+                return true;
+            return false;
         }
 
         /// <summary>
@@ -97,8 +100,11 @@ namespace AxisEngine.Physics
                 return false;
 
             // if there are any collisions with the circles or rectangles
-            return Circles.Any(cir => CollisionManager.Collides(cir, c)) ||
-                Rectangles.Any(r => CollisionManager.Collides(r, c));
+            if (Circles.Any(cir => CollisionManager.Collides(cir, c)))
+                return true;
+            if (Rectangles.Any(r => CollisionManager.Collides(r, c)))
+                return true;
+            return false;
         }
 
         /// <summary>
