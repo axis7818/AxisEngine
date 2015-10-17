@@ -184,13 +184,13 @@ namespace AxisEngine
         /// <summary>
         /// The position of the object relative to its owner
         /// </summary>
-        private Vector2 BasePosition
+        public Vector2 BasePosition
         {
             get
             {
                 return _position;
             }
-            set
+            private set
             {
                 _position = value;
             }
@@ -219,13 +219,13 @@ namespace AxisEngine
         /// <summary>
         /// The rotation of the object relative to its owner
         /// </summary>
-        private float BaseRotation
+        public float BaseRotation
         {
             get
             {
                 return _rotation;
             }
-            set
+            private set
             {
                 _rotation = value;
             }
@@ -260,7 +260,7 @@ namespace AxisEngine
             {
                 return _scale;
             }
-            set
+            private set
             {
                 _scale = value;
             }

@@ -74,6 +74,34 @@ namespace AxisEngine.Physics
         }
 
         /// <summary>
+        /// checks if the given rectangle intersects the trigger
+        /// </summary>
+        public bool Intersects(Rectangle r)
+        {
+            // if the outer bounds doesn't collide, then there is no need to continue checking
+            if (!CollisionManager.Collides(r, Bounds))
+                return false;
+
+            // if there are any collisions with the circles or rectangles
+            return Rectangles.Any(rec => CollisionManager.Collides(rec, r)) ||
+                Circles.Any(cir => CollisionManager.Collides(r, cir));
+        }
+
+        /// <summary>
+        /// checks if the given circle intersects the trigger
+        /// </summary>
+        public bool Intersects(Circle c)
+        {
+            // if the outer bounds dont collide, then there is no need to continue checking
+            if (!CollisionManager.Collides(Bounds, c))
+                return false;
+
+            // if there are any collisions with the circles or rectangles
+            return Circles.Any(cir => CollisionManager.Collides(cir, c)) ||
+                Rectangles.Any(r => CollisionManager.Collides(r, c));
+        }
+
+        /// <summary>
         /// returns true if the triggers intersect.
         /// </summary>
         /// <param name="trigger">the other trigger to check for an intersection with</param>
