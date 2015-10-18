@@ -13,6 +13,14 @@ namespace AxisEngine.Physics
         private Point Dimensions;
 
         /// <summary>
+        /// creates a new Box Collider with the given dimensions
+        /// </summary>
+        public BoxCollider(Point dimensions)
+        {
+            Dimensions = dimensions;
+        }
+
+        /// <summary>
         /// the rectangle that represents the collider
         /// </summary>
         public Rectangle Bounds
@@ -32,15 +40,6 @@ namespace AxisEngine.Physics
             {
                 return new Point((int)(Position.X + Dimensions.X * 0.5f), (int)(Position.Y + Dimensions.Y * 0.5f));
             }
-        }
-
-        /// <summary>
-        /// creates a new Box Collider with the given dimensions
-        /// </summary>
-        /// <param name="dimensions"></param>
-        public BoxCollider(Point dimensions)
-        {
-            Dimensions = dimensions;
         }
 
         /// <summary>
