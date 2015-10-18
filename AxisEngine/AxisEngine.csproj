@@ -58,6 +58,7 @@
     <Compile Include="LayerEventArgs.cs" />
     <Compile Include="Physics\Body.cs" />
     <Compile Include="Physics\BodyParams.cs" />
+    <Compile Include="Physics\BoxCollider.cs" />
     <Compile Include="Physics\CollisionManager.cs" />
     <Compile Include="Physics\ICollisionManageable.cs" />
     <Compile Include="Physics\TimeManager.cs" />
