@@ -1,4 +1,6 @@
-﻿namespace AxisEngine.Physics
+﻿using Microsoft.Xna.Framework;
+
+namespace AxisEngine.Physics
 {
     /// <summary>
     /// allows an object to be managed by a CollisionManager
@@ -10,5 +12,10 @@
         /// </summary>
         /// <param name="trigger">the trigger to check for overlap with</param>
         bool Intersects(Trigger trigger);
+
+        /// <summary>
+        /// the center of the CollisionMangeable 
+        /// </summary>
+        Point CenterPoint { get; }
     }
 }

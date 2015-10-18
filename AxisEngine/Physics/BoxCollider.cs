@@ -24,6 +24,17 @@ namespace AxisEngine.Physics
         }
 
         /// <summary>
+        /// gets the point in the game world that represents the center of the collider
+        /// </summary>
+        public Point CenterPoint
+        {
+            get
+            {
+                return new Point((int)(Position.X + Dimensions.X * 0.5f), (int)(Position.Y + Dimensions.Y * 0.5f));
+            }
+        }
+
+        /// <summary>
         /// creates a new Box Collider with the given dimensions
         /// </summary>
         /// <param name="dimensions"></param>
