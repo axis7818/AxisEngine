@@ -2,6 +2,7 @@
 List of things to do for AxisEngine
 
 ## World
+* test the world manager in the test bed. add loading/disposing of worlds.
 * ability to change between worlds 
   * loading/disposing of worlds
 
