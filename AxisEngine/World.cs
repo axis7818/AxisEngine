@@ -15,6 +15,11 @@ namespace AxisEngine
     public class World : IUpdateable, IDrawable
     {
         /// <summary>
+        /// the color that the background is drawn in
+        /// </summary>
+        public Color BackgroundColor = Color.CornflowerBlue;
+
+        /// <summary>
         /// The collision managers that belong to this world
         /// </summary>
         protected Dictionary<string, CollisionManager> CollisionManagers;
