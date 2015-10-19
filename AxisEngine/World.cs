@@ -1,7 +1,6 @@
 ﻿using AxisEngine.Physics;
 using AxisEngine.Visuals;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -24,11 +23,6 @@ namespace AxisEngine
         /// The collision managers that belong to this world
         /// </summary>
         protected Dictionary<string, CollisionManager> CollisionManagers;
-
-        /// <summary>
-        /// The Content loaded that loads content into the world
-        /// </summary>
-        protected ContentManager Content;
 
         /// <summary>
         /// The draw managers that belong to this world
@@ -81,11 +75,15 @@ namespace AxisEngine
         /// </summary>
         /// <param name="graphics">the graphics manager</param>
         /// <param name="graphicsDevice">the graphics device</param>
-        /// <param name="content">the content loader</param>
-        /// <param name="layers">layers to add to the world</param>
-        public World(GraphicsDeviceManager graphics, GraphicsDevice graphicsDevice, ContentManager content, params Layer[] layers)
+        public World(GraphicsDeviceManager graphics, GraphicsDevice graphicsDevice)
         {
-            Initialize(graphics, graphicsDevice, content, layers);
+            Graphics = graphics;
+            GraphicsDevice = graphicsDevice;
+
+            UpdateOrder = 0;
+            DrawOrder = 0;
+
+            Initialize();
         }
 
         #region Events
@@ -175,6 +173,54 @@ namespace AxisEngine
         #endregion Properties
 
         #region Methods
+        /// <summary>
+        /// loads the world
+        /// </summary>
+        public void Initialize()
+        {
+            // create the manager objects and layers object
+            Layers = new List<Layer>();
+            CollisionManagers = new Dictionary<string, CollisionManager>();
+            DrawManagers = new Dictionary<string, DrawManager>();
+            TimeManagers = new Dictionary<string, TimeManager>();
+
+            // turn updating and drawing on
+            Enabled = true;
+            Visible = true;
+
+            // do any custom loading 
+            Load();
+        }
+
+        /// <summary>
+        /// allows for child classes to do custom loading
+        /// </summary>
+        protected abstract void Load();
+
+        /// <summary>
+        /// disposes the world
+        /// </summary>
+        public void Dispose()
+        {
+            // dispose of the layers and manager objects
+            Layers = null;
+            CollisionManagers = null;
+            DrawManagers = null;
+            TimeManagers = null;
+
+            // turn off updating and drawing
+            Enabled = false;
+            Visible = false;
+
+            // do any custom unloading
+            Unload();
+        }
+
+        /// <summary>
+        /// allows for child classes to do custom disposing
+        /// </summary>
+        protected abstract void Unload();
+
         /// <summary>
         /// Adds a layer to the world
         /// </summary>
@@ -282,34 +328,6 @@ namespace AxisEngine
                 foreach (CollisionManager collisionManager in CollisionManagers.Values)
                     collisionManager.Update(t);
             }
-        }
-
-        /// <summary>
-        /// initializes the variables and parameters
-        /// </summary>
-        /// <param name="graphics">the graphics manager</param>
-        /// <param name="graphicsDevice">the graphics device</param>
-        /// <param name="content">the content loader</param>
-        /// <param name="layers">layers to add to the world</param>
-        private void Initialize(GraphicsDeviceManager graphics, GraphicsDevice graphicsDevice, ContentManager content, params Layer[] layers)
-        {
-            Layers = new List<Layer>();
-            CollisionManagers = new Dictionary<string, CollisionManager>();
-            DrawManagers = new Dictionary<string, DrawManager>();
-            TimeManagers = new Dictionary<string, TimeManager>();
-
-            Graphics = graphics;
-            GraphicsDevice = graphicsDevice;
-            Content = content;
-
-            AddLayers(layers);
-            SortUpdateOrder();
-
-            Enabled = true;
-            UpdateOrder = 0;
-
-            Visible = true;
-            DrawOrder = 0;
         }
 
         /// <summary>
