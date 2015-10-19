@@ -7,7 +7,7 @@ namespace AxisEngine
     /// <summary>
     /// The base object that can exist in the world. World objects can be stacked in a tree structure to form an entity in the game world.
     /// </summary>
-    public class WorldObject : IUpdateable
+    public abstract class WorldObject : IUpdateable
     {
         /// <summary>
         /// the update order of the object

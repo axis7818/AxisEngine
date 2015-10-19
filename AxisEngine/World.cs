@@ -12,8 +12,9 @@ namespace AxisEngine
     /// <summary>
     /// A scene within the game
     /// </summary>
-    public class World : IUpdateable, IDrawable
+    public abstract class World : IUpdateable, IDrawable
     {
+        #region Fields
         /// <summary>
         /// the color that the background is drawn in
         /// </summary>
@@ -73,6 +74,7 @@ namespace AxisEngine
         /// whether or not the world is visible
         /// </summary>
         private bool _visible;
+        #endregion Fields
 
         /// <summary>
         /// initializes a new World
@@ -86,6 +88,7 @@ namespace AxisEngine
             Initialize(graphics, graphicsDevice, content, layers);
         }
 
+        #region Events
         /// <summary>
         /// fired when the DrawOrder property is changed
         /// </summary>
@@ -115,7 +118,9 @@ namespace AxisEngine
         /// fired when the Visible property is changed
         /// </summary>
         public event EventHandler<EventArgs> VisibleChanged;
+        #endregion Events
 
+        #region Properties
         /// <summary>
         /// the order in which this world is drawn
         /// </summary>
@@ -128,7 +133,7 @@ namespace AxisEngine
                 if (DrawOrderChanged != null) DrawOrderChanged(this, new EventArgs());
             }
         }
-
+                
         /// <summary>
         /// whether or not the world is enabled
         /// </summary>
@@ -167,7 +172,9 @@ namespace AxisEngine
                 if (VisibleChanged != null) VisibleChanged(this, new EventArgs());
             }
         }
+        #endregion Properties
 
+        #region Methods
         /// <summary>
         /// Adds a layer to the world
         /// </summary>
@@ -344,5 +351,6 @@ namespace AxisEngine
             }
             catch (Exception) { }
         }
+        #endregion Methods
     }
 }

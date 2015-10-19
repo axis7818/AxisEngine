@@ -10,7 +10,7 @@ namespace AxisEngine
     /// <summary>
     /// holds a list of WorldObjects and manages their presence in the game. They are managed through a CollisionManager (physics) and a DrawManager (rendering)
     /// </summary>
-    public class Layer : IUpdateable
+    public abstract class Layer : IUpdateable
     {
         /// <summary>
         /// whether or not the layer is enabled
