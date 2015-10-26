@@ -94,8 +94,7 @@ namespace AxisEngine.Physics
                 float time = (float)t.ElapsedGameTime.TotalSeconds;
                 Vector2 netForce = InternalForce + ExternalForce;
                 Velocity += (time * Parameters.InvMass) * netForce;
-
-                //TODO: revise the friction algorithm... 
+                
                 // apply friction
                 if (Velocity.LengthSquared() > 0)
                 {
