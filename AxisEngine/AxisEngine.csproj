@@ -74,6 +74,8 @@
     <Compile Include="Visuals\IDrawManageable.cs" />
     <Compile Include="Visuals\Sprite.cs" />
     <Compile Include="World.cs" />
+    <Compile Include="WorldEventArgs.cs" />
+    <Compile Include="WorldManager.cs" />
     <Compile Include="WorldObject.cs" />
     <Compile Include="WorldObjectEventArgs.cs" />
   </ItemGroup>
