@@ -1,13 +1,25 @@
-# TODO 
+# TODO
 List of things to do for AxisEngine
+
+## Start making a test game
+The features of the engine have only been tested independently and in very controlled environments. We need to make sure that all features will work together before adding other features.
+* Test all features that are currently implemented
+    * physics
+    * animation
+    * parent/child object relationships
+    * debug features
+* Once all of that works and is implemented
+    * get world manager/loading/disposing up and working
+    * brush up the physics to make it more customizable
 
 ## World
 * test the world manager in the test bed. add loading/disposing of worlds.
-* ability to change between worlds 
+* ability to change between worlds
   * loading/disposing of worlds
 
 ## CollisionManager and Physics Engine
-* ability for collision between colliders (BoxCollider, CircleCollider) 
+* ability for collision between colliders (BoxCollider, CircleCollider)
 * ability to detect trigger entry/exit and fire events accordingly
 * classes for collisions to hold data about the collision
 * allow for a dynamic gravity value (right now, it is hardcoded in)
+    * remove friction all together so that top-down/sidescrolling physics can happen independently
