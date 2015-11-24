@@ -67,7 +67,10 @@ namespace AxisEngine
 
         public int DrawOrder
         {
-            get { return _drawOrder; }
+            get
+            {
+                return _drawOrder;
+            }
             set
             {
                 _drawOrder = value;
@@ -77,7 +80,10 @@ namespace AxisEngine
 
         public bool Enabled
         {
-            get { return _enabled; }
+            get
+            {
+                return _enabled;
+            }
             set
             {
                 _enabled = value;
@@ -87,7 +93,10 @@ namespace AxisEngine
 
         public int UpdateOrder
         {
-            get { return _updateOrder; }
+            get
+            {
+                return _updateOrder;
+            }
             set
             {
                 _updateOrder = value;
@@ -97,7 +106,10 @@ namespace AxisEngine
 
         public bool Visible
         {
-            get { return _visible; }
+            get
+            {
+                return _visible;
+            }
             set
             {
                 _visible = value;

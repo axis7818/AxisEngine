@@ -51,7 +51,10 @@ namespace AxisEngine
 
         public bool Enabled
         {
-            get { return _enabled; }
+            get
+            {
+                return _enabled;
+            }
             set
             {
                 _enabled = value;
@@ -69,7 +72,10 @@ namespace AxisEngine
 
         public Layer Layer
         {
-            get { return _layer; }
+            get
+            {
+                return _layer;
+            }
             set
             {
                 _layer = value;
@@ -79,7 +85,10 @@ namespace AxisEngine
 
         public WorldObject Owner
         {
-            get { return _owner; }
+            get
+            {
+                return _owner;
+            }
             set
             {
                 _owner = value;
@@ -180,7 +189,10 @@ namespace AxisEngine
 
         public int UpdateOrder
         {
-            get { return _updateOrder; }
+            get
+            {
+                return _updateOrder;
+            }
             set
             {
                 _updateOrder = value;

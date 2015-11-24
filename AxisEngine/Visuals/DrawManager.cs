@@ -35,7 +35,10 @@ namespace AxisEngine.Visuals
 
         public int DrawOrder
         {
-            get { return _drawOrder; }
+            get
+            {
+                return _drawOrder;
+            }
             set
             {
                 _drawOrder = value;
@@ -63,7 +66,10 @@ namespace AxisEngine.Visuals
 
         public bool Visible
         {
-            get { return _visible; }
+            get
+            {
+                return _visible;
+            }
             set
             {
                 _visible = value;

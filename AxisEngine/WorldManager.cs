@@ -6,7 +6,6 @@ namespace AxisEngine
     public static class WorldManager
     {
         private static World _currentWorld;
-
         private static Dictionary<string, World> Worlds;
 
         static WorldManager()
