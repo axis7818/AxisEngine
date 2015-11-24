@@ -9,25 +9,57 @@ namespace AxisEngine.Visuals
     public class Sprite : WorldObject, IDrawManageable
     {
         /// <summary>
-        /// Instantiates a sprite
+        /// an offset for the sprite
         /// </summary>
-        /// <param name="texture">The texture that is displayed</param>
-        public Sprite(Texture2D texture)
-        {
-            Initialize(texture, Vector2.Zero, Color.White, SpriteEffects.None, Vector2.Zero, 0);
-        }
+        private Vector2 _offset;
 
         /// <summary>
         /// Instantiates a sprite
         /// </summary>
         /// <param name="texture">The texture that is displayed</param>
-        /// <param name="orgin">The orgin of rotation</param>
-        /// <param name="color">the color tint to apply</param>
-        /// <param name="effect">The effect to apply to the sprite</param>
-        /// <param name="offset">an offset to render the texture at</param>
-        public Sprite(Texture2D texture, Vector2? orgin = null, Color? color = null, SpriteEffects spriteEffect = SpriteEffects.None, Vector2? offset = null, int drawOrder = 0)
+        public Sprite(Texture2D texture)
         {
-            Initialize(texture, orgin ?? Vector2.Zero, color ?? Color.White, spriteEffect, offset ?? Vector2.Zero, drawOrder);
+            Texture = texture;
+            DrawOrder = 0;
+            Color = Color.White;
+            Origin = Vector2.Zero;
+            SpriteEffect = SpriteEffects.None;
+            SourceRectangle = null;
+            DestinationRectangle = null;
+
+            _offset = Vector2.Zero;
+        }
+
+        /// <summary>
+        /// the ractangle from the sprite to use
+        /// </summary>
+        public Rectangle? SourceRectangle { get; set; }
+
+        /// <summary>
+        /// The rectangle to draw to
+        /// </summary>
+        public Rectangle? DestinationRectangle { get; set; }
+
+        /// <summary>
+        /// ???
+        /// </summary>
+        public float LayerDepth
+        {
+            get
+            {
+                return 0;
+            }
+        }
+
+        /// <summary>
+        /// The position to draw the sprite at
+        /// </summary>
+        public Vector2 DrawPosition
+        {
+            get
+            {
+                return Position + _offset;
+            }
         }
 
         /// <summary>
@@ -41,14 +73,9 @@ namespace AxisEngine.Visuals
         public Color Color { get; set; }
 
         /// <summary>
-        /// The offset to render the sprite at
-        /// </summary>
-        public Vector2 Offset { get; set; }
-
-        /// <summary>
         /// The orgin of the sprite with a default of (0, 0)
         /// </summary>
-        public Vector2 Orgin { get; set; }
+        public Vector2 Origin { get; set; }
 
         /// <summary>
         /// The effect to apply to the sprite
@@ -61,29 +88,29 @@ namespace AxisEngine.Visuals
         public Texture2D Texture { get; set; }
 
         /// <summary>
+        /// offsets the sprite drawing if using the upper-left corner isn't where the spirte should be
+        /// </summary>
+        /// <param name="offset"></param>
+        public void Offset(Vector2 offset)
+        {
+            _offset = offset;
+        }
+
+        /// <summary>
         /// centers the sprite based on the texture's dimensions
         /// </summary>
         public void Center()
         {
-            Orgin = new Vector2(Texture.Width * 0.5f, Texture.Height * 0.5f);
+            _offset = new Vector2(-Texture.Width * 0.5f, -Texture.Height * 0.5f);
         }
 
         /// <summary>
-        /// sets the default values of the sprite
+        /// remove a margin around the texture
         /// </summary>
-        /// <param name="texture">The texture that is displayed</param>
-        /// <param name="orgin">The orgin of rotation</param>
-        /// <param name="color">the color tint to apply</param>
-        /// <param name="effect">The effect to apply to the sprite</param>
-        /// <param name="offset">an offset to render the texture at</param>
-        private void Initialize(Texture2D texture, Vector2 orgin, Color color, SpriteEffects effect, Vector2 offset, int drawOrder)
+        /// <param name="margin"></param>
+        public void Trim(int margin)
         {
-            DrawOrder = drawOrder;
-            Texture = texture;
-            Color = color;
-            Orgin = orgin;
-            SpriteEffect = effect;
-            Offset = offset;
+            SourceRectangle = new Rectangle(margin, margin, Texture.Width - 2 * margin, Texture.Height - 2 * margin);
         }
     }
 }

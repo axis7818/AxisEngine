@@ -19,19 +19,14 @@ namespace AxisEngine.Visuals
         Color Color { get; }
 
         /// <summary>
-        /// An offset position to render the texture at
+        /// the origin of rotation
         /// </summary>
-        Vector2 Offset { get; }
-
-        /// <summary>
-        /// whether or not the texture should be centered
-        /// </summary>
-        Vector2 Orgin { get; }
+        Vector2 Origin { get; }
 
         /// <summary>
         /// the position to draw at
         /// </summary>
-        Vector2 Position { get; }
+        Vector2 DrawPosition { get; }
 
         /// <summary>
         /// The rotation of the texture (in radians)
@@ -52,5 +47,20 @@ namespace AxisEngine.Visuals
         /// the texture to draw
         /// </summary>
         Texture2D Texture { get; }
+
+        /// <summary>
+        /// ????
+        /// </summary>
+        float LayerDepth { get; }
+
+        /// <summary>
+        /// The source rectangle to use from the texture
+        /// </summary>
+        Rectangle? SourceRectangle { get; }
+
+        /// <summary>
+        /// The destination rectangle to be drawn to
+        /// </summary>
+        Rectangle? DestinationRectangle { get; }
     }
 }

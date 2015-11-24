@@ -152,7 +152,16 @@ namespace AxisEngine.Visuals
                 SpriteBatch.Begin();
 
                 foreach (IDrawManageable toDraw in ThingsToDraw)
-                    SpriteBatch.Draw(toDraw.Texture, toDraw.Position + toDraw.Offset, null, null, toDraw.Orgin, toDraw.Rotation, toDraw.Scale, toDraw.Color, toDraw.SpriteEffect, 0);
+                    SpriteBatch.Draw(toDraw.Texture, 
+                                     toDraw.DrawPosition, 
+                                     toDraw.DestinationRectangle, 
+                                     toDraw.SourceRectangle, 
+                                     toDraw.Origin, 
+                                     toDraw.Rotation, 
+                                     toDraw.Scale, 
+                                     toDraw.Color, 
+                                     toDraw.SpriteEffect, 
+                                     toDraw.LayerDepth);
 
                 SpriteBatch.End();
             }
