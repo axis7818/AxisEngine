@@ -5,34 +5,16 @@ using System.Collections.Generic;
 
 namespace AxisEngine.Physics
 {
-    /// <summary>
-    /// Manages objects that can collide
-    /// </summary>
     public class CollisionManager : IUpdateable, IEnumerable
     {
-        /// <summary>
-        /// Whether or not the manager is enabled
-        /// </summary>
         private bool _enabled;
 
-        /// <summary>
-        /// The order that this object is updated in
-        /// </summary>
         private int _updateOrder;
 
-        /// <summary>
-        /// the objects that the collision manager will manage
-        /// </summary>
         private List<ICollisionManageable> ToManage;
 
-        /// <summary>
-        /// the triggers to manage
-        /// </summary>
         private List<Trigger> Triggers;
 
-        /// <summary>
-        /// instantiates a Collision manager
-        /// </summary>
         public CollisionManager()
         {
             Enabled = true;
@@ -42,19 +24,10 @@ namespace AxisEngine.Physics
             Triggers = new List<Trigger>();
         }
 
-        /// <summary>
-        /// Fired when the Enabled property changes
-        /// </summary>
         public event EventHandler<EventArgs> EnabledChanged;
 
-        /// <summary>
-        /// Fired when the UpdateOrder property changes
-        /// </summary>
         public event EventHandler<EventArgs> UpdateOrderChanged;
 
-        /// <summary>
-        /// Whether or not the manager is enabled
-        /// </summary>
         public bool Enabled
         {
             get { return _enabled; }
@@ -65,9 +38,6 @@ namespace AxisEngine.Physics
             }
         }
 
-        /// <summary>
-        /// gets the number of items that are being managed
-        /// </summary>
         public int Size
         {
             get
@@ -76,9 +46,6 @@ namespace AxisEngine.Physics
             }
         }
 
-        /// <summary>
-        /// The order that this object is updated in
-        /// </summary>
         public int UpdateOrder
         {
             get { return _updateOrder; }
@@ -89,25 +56,16 @@ namespace AxisEngine.Physics
             }
         }
 
-        /// <summary>
-        /// checks whether or not two rectangles collide
-        /// </summary>
         public static bool Collides(Rectangle r1, Rectangle r2)
         {
             return r1.Intersects(r2);
         }
 
-        /// <summary>
-        /// checks whether or not two circles collide
-        /// </summary>
         public static bool Collides(Circle c1, Circle c2)
         {
             return c1.Intersects(c2);
         }
 
-        /// <summary>
-        /// checks whether or not a rectanlge and circle collide
-        /// </summary>
         public static bool Collides(Rectangle r, Circle c)
         {
             // check if the center of the circle is in the rectangle
@@ -153,10 +111,6 @@ namespace AxisEngine.Physics
             return false;
         }
 
-        /// <summary>
-        /// Adds an ICollisionManageable to the Collision manager
-        /// </summary>
-        /// <param name="collisionManageable">the ICollisionManageable to add</param>
         public void AddCollisionManageable(ICollisionManageable collisionManageable)
         {
             if (!ToManage.Contains(collisionManageable))
@@ -165,10 +119,6 @@ namespace AxisEngine.Physics
                 throw new ArgumentException("collisionManageable already exists in the manager.");
         }
 
-        /// <summary>
-        /// Adds a Trigger to the Collision Manager
-        /// </summary>
-        /// <param name="trigger"></param>
         public void AddTrigger(Trigger trigger)
         {
             if (!Triggers.Contains(trigger))
@@ -177,27 +127,16 @@ namespace AxisEngine.Physics
                 throw new ArgumentException("trigger already exists in the manager.");
         }
 
-        /// <summary>
-        /// whether or not the collision manager contains the ICollisionManageable
-        /// </summary>
-        /// <param name="coll">the ICollisionManageable to check for</param>
         public bool Contains(ICollisionManageable coll)
         {
             return ToManage.Contains(coll);
         }
 
-        /// <summary>
-        /// whether or not the collision manager contains the trigger
-        /// </summary>
-        /// <param name="trigger">the trigger to check for</param>
         public bool Contains(Trigger trigger)
         {
             return Triggers.Contains(trigger);
         }
 
-        /// <summary>
-        /// enumerates the CollisionManager to get the CollisionManageables
-        /// </summary>
         public IEnumerator GetEnumerator()
         {
             foreach (ICollisionManageable coll in ToManage)
@@ -206,39 +145,24 @@ namespace AxisEngine.Physics
             }
         }
 
-        /// <summary>
-        /// enumerates the Triggers in the collision manager
-        /// </summary>
         public IEnumerator GetEnumeratedTriggers()
         {
-            foreach(Trigger trig in Triggers)
+            foreach (Trigger trig in Triggers)
             {
                 yield return trig;
             }
         }
 
-        /// <summary>
-        /// removes an ICollisionManageable from the Collision manager
-        /// </summary>
-        /// <param name="coll">the ICollisionManager to remove</param>
         public void Remove(ICollisionManageable coll)
         {
             ToManage.Remove(coll);
         }
 
-        /// <summary>
-        /// removes a trigger from the Collision Manager
-        /// </summary>
-        /// <param name="trigger">the trigger to remove</param>
         public void Remove(Trigger trigger)
         {
             Triggers.Remove(trigger);
         }
 
-        /// <summary>
-        /// updates the collision manager
-        /// </summary>
-        /// <param name="t">the time since the last update</param>
         public void Update(GameTime t)
         {
             if (Enabled)

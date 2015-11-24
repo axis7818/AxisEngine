@@ -6,49 +6,22 @@ using System.Linq;
 
 namespace AxisEngine.UserInput
 {
-    /// <summary>
-    /// Manages the input from the user
-    /// </summary>
     public class InputManager : WorldObject
     {
-        /// <summary>
-        /// Axis bindings (a positive and negative button)
-        /// </summary>
         private Dictionary<string, Tuple<Keys, Keys>> AxisBindings;
 
-        /// <summary>
-        /// A collection of bindings using the keyboard
-        /// </summary>
         private Dictionary<string, Keys> Bindings_Keyboard;
 
-        /// <summary>
-        /// A collection of bindings using the mouse
-        /// </summary>
         private Dictionary<string, MouseButtons> Bindings_Mouse;
 
-        /// <summary>
-        /// The last frame's keyboard's button presses
-        /// </summary>
         private KeyboardState LastState_Keyboard;
 
-        /// <summary>
-        /// The last frame's mouse's state
-        /// </summary>
         private MouseState LastState_Mouse;
 
-        /// <summary>
-        /// The state of the keyboard's button presses
-        /// </summary>
         private KeyboardState State_Keyboard;
 
-        /// <summary>
-        /// The state of the Mouse
-        /// </summary>
         private MouseState State_Mouse;
 
-        /// <summary>
-        /// Instantiates a new InputManager
-        /// </summary>
         public InputManager()
         {
             // get first states
@@ -65,47 +38,20 @@ namespace AxisEngine.UserInput
             UpdateOrder = 0;
         }
 
-        /// <summary>
-        /// The change in the scroll value from the last frame
-        /// </summary>
         public int MouseDeltaScroll { get; private set; }
 
-        /// <summary>
-        /// The change in X in the last update
-        /// </summary>
         public int MouseDeltaX { get; private set; }
 
-        /// <summary>
-        /// the change in Y in the last update
-        /// </summary>
         public int MouseDeltaY { get; private set; }
 
-        /// <summary>
-        /// The position of the mouse
-        /// </summary>
         public Point MousePosition { get; private set; }
 
-        /// <summary>
-        /// The scroll input of the mouse
-        /// </summary>
         public int MouseScroll { get; private set; }
 
-        /// <summary>
-        /// The X input of the mouse
-        /// </summary>
         public int MouseX { get; private set; }
 
-        /// <summary>
-        /// The Y input of the mouse
-        /// </summary>
         public int MouseY { get; private set; }
 
-        /// <summary>
-        /// adds an input axis
-        /// </summary>
-        /// <param name="name">the name of the axis</param>
-        /// <param name="positiveKey">the positive key</param>
-        /// <param name="negativeKey">the negative key</param>
         public void AddAxis(string name, Keys positiveKey, Keys negativeKey)
         {
             if (!Bindings_Keyboard.Values.Contains(positiveKey) && !Bindings_Keyboard.Values.Contains(negativeKey))
@@ -125,11 +71,6 @@ namespace AxisEngine.UserInput
             }
         }
 
-        /// <summary>
-        /// Adds a key binding
-        /// </summary>
-        /// <param name="name">the name of the binding</param>
-        /// <param name="key">the key that is pushed</param>
         public void AddBinding(string name, Keys key)
         {
             if (!Bindings_Keyboard.Values.Contains(key) && !AxisBindings.Values.Any(tuple => (tuple.Item1 == key || tuple.Item2 == key)))
@@ -149,11 +90,6 @@ namespace AxisEngine.UserInput
             }
         }
 
-        /// <summary>
-        /// adds a mouse binding
-        /// </summary>
-        /// <param name="name">the name of the bnding</param>
-        /// <param name="mouseButton">the mouse button to be pushed</param>
         public void AddBinding(string name, MouseButtons mouseButton)
         {
             if (!Bindings_Mouse.Values.Contains(mouseButton))
@@ -173,20 +109,12 @@ namespace AxisEngine.UserInput
             }
         }
 
-        /// <summary>
-        /// removes all bindings
-        /// </summary>
         public void ClearBindings()
         {
             Bindings_Keyboard.Clear();
             Bindings_Mouse.Clear();
         }
 
-        /// <summary>
-        /// gets the value of the axis [-1, 0, or 1]
-        /// </summary>
-        /// <param name="name">the name of the axis</param>
-        /// <returns>-1, 0, or 1 depending on the state of the axis</returns>
         public int GetAxis(string name)
         {
             if (Enabled)
@@ -208,11 +136,6 @@ namespace AxisEngine.UserInput
             else return 0;
         }
 
-        /// <summary>
-        /// gets the state of a binding
-        /// </summary>
-        /// <param name="name">the name of the binding</param>
-        /// <returns>whether or not the binding is pressed</returns>
         public bool GetBinding(string name)
         {
             if (Enabled)
@@ -252,11 +175,6 @@ namespace AxisEngine.UserInput
             else return false;
         }
 
-        /// <summary>
-        /// gets the binding on its first frame
-        /// </summary>
-        /// <param name="name">the name of the binding</param>
-        /// <returns>returns true on the first frame that the binding is pressed</returns>
         public bool GetBindingDown(string name)
         {
             if (Enabled)
@@ -296,11 +214,6 @@ namespace AxisEngine.UserInput
             else return false;
         }
 
-        /// <summary>
-        /// gets the binding when it is released
-        /// </summary>
-        /// <param name="name">the name of the binding</param>
-        /// <returns>returns true on the first frame that the binding is released</returns>
         public bool GetBindingUp(string name)
         {
             if (Enabled)
@@ -340,10 +253,6 @@ namespace AxisEngine.UserInput
             else return false;
         }
 
-        /// <summary>
-        /// removes a binding if it exists
-        /// </summary>
-        /// <param name="name">the name of the binding to remove</param>
         public void RemoveBinding(string name)
         {
             if (Bindings_Keyboard.Keys.Contains(name))
@@ -356,10 +265,6 @@ namespace AxisEngine.UserInput
             }
         }
 
-        /// <summary>
-        /// refreshes the input states for the current frame
-        /// </summary>
-        /// <param name="t">the time since the last update</param>
         public override void UpdateThis(GameTime t)
         {
             // update the states

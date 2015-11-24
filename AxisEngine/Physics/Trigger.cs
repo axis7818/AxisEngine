@@ -1,37 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Xna.Framework;
 
 namespace AxisEngine.Physics
 {
-    /// <summary>
-    /// an interface that will test whether overlaps occur
-    /// </summary>
     public class Trigger : WorldObject
     {
-        /// <summary>
-        /// whether or not to just use the outer bounds for collision detection
-        /// </summary>
         private bool _simple;
 
-        /// <summary>
-        /// the circles that are part of the trigger
-        /// </summary>
         private List<Circle> Circles;
 
-        /// <summary>
-        /// the rectangles that are part of the trigger
-        /// </summary>
         private List<Rectangle> Rectangles;
 
-        /// <summary>
-        /// the dimensions of the outer bounds
-        /// </summary>
         private Point BoundsDimensions;
 
-        /// <summary>
-        /// the outer bounds of the trigger
-        /// </summary>
         public Rectangle Bounds
         {
             get
@@ -40,9 +22,6 @@ namespace AxisEngine.Physics
             }
         }
 
-        /// <summary>
-        /// gets whether or not the trigger is simple
-        /// </summary>
         public bool IsSimple
         {
             get
@@ -51,12 +30,6 @@ namespace AxisEngine.Physics
             }
         }
 
-        /// <summary>
-        /// creates a new Trigger instance
-        /// </summary>
-        /// <param name="boundDimensions">the x and y dimensions to be used for the outer bounding box</param>
-        /// <param name="circles">the circles that will be used to build the trigger shape</param>
-        /// <param name="rectangles">the rectangles that will be used to build the trigger shape</param>
         public Trigger(Point boundDimensions, IEnumerable<Circle> circles = null, IEnumerable<Rectangle> rectangles = null)
         {
             BoundsDimensions = boundDimensions;
@@ -65,17 +38,11 @@ namespace AxisEngine.Physics
             _simple = Circles == null && Rectangles == null;
         }
 
-        /// <summary>
-        /// centers the trigger with its parent
-        /// </summary>
         public void Center()
         {
             Position = new Vector2(-Bounds.Width * 0.5f, -Bounds.Height * 0.5f);
         }
 
-        /// <summary>
-        /// checks if the given rectangle intersects the trigger
-        /// </summary>
         public bool Intersects(Rectangle r)
         {
             // if the outer bounds doesn't collide, then there is no need to continue checking
@@ -90,9 +57,6 @@ namespace AxisEngine.Physics
             return false;
         }
 
-        /// <summary>
-        /// checks if the given circle intersects the trigger
-        /// </summary>
         public bool Intersects(Circle c)
         {
             // if the outer bounds dont collide, then there is no need to continue checking
@@ -107,10 +71,6 @@ namespace AxisEngine.Physics
             return false;
         }
 
-        /// <summary>
-        /// returns true if the triggers intersect.
-        /// </summary>
-        /// <param name="trigger">the other trigger to check for an intersection with</param>
         public bool Intersects(Trigger trigger)
         {
             // get the bounding rectangles
@@ -148,7 +108,6 @@ namespace AxisEngine.Physics
                         trigger.Circles.Any(c => CollisionManager.Collides(R, c)))) ||            // compare these rectangles with those circles
                         Circles.Any(C => trigger.Circles.Any(c => C.Intersects(c)) ||             // compare these circles with those circles
                         trigger.Rectangles.Any(r => CollisionManager.Collides(r, C)));            // compare these circles with those rectangles
-
                 }
             }
         }

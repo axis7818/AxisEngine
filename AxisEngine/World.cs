@@ -8,73 +8,34 @@ using System.Linq;
 
 namespace AxisEngine
 {
-    /// <summary>
-    /// A scene within the game
-    /// </summary>
     public abstract class World : IUpdateable, IDrawable
     {
         #region Fields
-        /// <summary>
-        /// the color that the background is drawn in
-        /// </summary>
+
         public Color BackgroundColor = Color.CornflowerBlue;
 
-        /// <summary>
-        /// The collision managers that belong to this world
-        /// </summary>
         protected Dictionary<string, CollisionManager> CollisionManagers;
 
-        /// <summary>
-        /// The draw managers that belong to this world
-        /// </summary>
         protected Dictionary<string, DrawManager> DrawManagers;
 
-        /// <summary>
-        /// The time managers that belong to this world
-        /// </summary>
         protected Dictionary<string, TimeManager> TimeManagers;
 
-        /// <summary>
-        /// The graphics device manager for this world
-        /// </summary>
         protected GraphicsDeviceManager Graphics;
 
-        /// <summary>
-        /// The graphics device for this world
-        /// </summary>
         protected GraphicsDevice GraphicsDevice;
 
-        /// <summary>
-        /// The layers that belong to this world
-        /// </summary>
         protected List<Layer> Layers;
 
-        /// <summary>
-        /// the order in which this world is drawn
-        /// </summary>
         private int _drawOrder;
 
-        /// <summary>
-        /// whether or not the world is enabled
-        /// </summary>
         private bool _enabled;
 
-        /// <summary>
-        /// the update order of the world
-        /// </summary>
         private int _updateOrder;
 
-        /// <summary>
-        /// whether or not the world is visible
-        /// </summary>
         private bool _visible;
+
         #endregion Fields
 
-        /// <summary>
-        /// initializes a new World
-        /// </summary>
-        /// <param name="graphics">the graphics manager</param>
-        /// <param name="graphicsDevice">the graphics device</param>
         public World(GraphicsDeviceManager graphics, GraphicsDevice graphicsDevice)
         {
             Graphics = graphics;
@@ -87,41 +48,23 @@ namespace AxisEngine
         }
 
         #region Events
-        /// <summary>
-        /// fired when the DrawOrder property is changed
-        /// </summary>
+
         public event EventHandler<EventArgs> DrawOrderChanged;
 
-        /// <summary>
-        /// fired when the Enabled property is changed
-        /// </summary>
         public event EventHandler<EventArgs> EnabledChanged;
 
-        /// <summary>
-        /// fired when a layer is added to the world
-        /// </summary>
         public event EventHandler<LayerEventArgs> LayerAdded;
 
-        /// <summary>
-        /// fired when a layer is removed from the world
-        /// </summary>
         public event EventHandler<LayerEventArgs> LayerRemoved;
 
-        /// <summary>
-        /// fired when the UpdateOrder property is changed
-        /// </summary>
         public event EventHandler<EventArgs> UpdateOrderChanged;
 
-        /// <summary>
-        /// fired when the Visible property is changed
-        /// </summary>
         public event EventHandler<EventArgs> VisibleChanged;
+
         #endregion Events
 
         #region Properties
-        /// <summary>
-        /// the order in which this world is drawn
-        /// </summary>
+
         public int DrawOrder
         {
             get { return _drawOrder; }
@@ -131,10 +74,7 @@ namespace AxisEngine
                 if (DrawOrderChanged != null) DrawOrderChanged(this, new EventArgs());
             }
         }
-                
-        /// <summary>
-        /// whether or not the world is enabled
-        /// </summary>
+
         public bool Enabled
         {
             get { return _enabled; }
@@ -145,9 +85,6 @@ namespace AxisEngine
             }
         }
 
-        /// <summary>
-        /// the update order of the world
-        /// </summary>
         public int UpdateOrder
         {
             get { return _updateOrder; }
@@ -158,9 +95,6 @@ namespace AxisEngine
             }
         }
 
-        /// <summary>
-        /// whether or not the world is visible
-        /// </summary>
         public bool Visible
         {
             get { return _visible; }
@@ -170,12 +104,11 @@ namespace AxisEngine
                 if (VisibleChanged != null) VisibleChanged(this, new EventArgs());
             }
         }
+
         #endregion Properties
 
         #region Methods
-        /// <summary>
-        /// loads the world
-        /// </summary>
+
         public void Initialize()
         {
             // create the manager objects and layers object
@@ -188,18 +121,12 @@ namespace AxisEngine
             Enabled = true;
             Visible = true;
 
-            // do any custom loading 
+            // do any custom loading
             Load();
         }
 
-        /// <summary>
-        /// allows for child classes to do custom loading
-        /// </summary>
         protected abstract void Load();
 
-        /// <summary>
-        /// disposes the world
-        /// </summary>
         public void Dispose()
         {
             // dispose of the layers and manager objects
@@ -216,15 +143,8 @@ namespace AxisEngine
             Unload();
         }
 
-        /// <summary>
-        /// allows for child classes to do custom disposing
-        /// </summary>
         protected abstract void Unload();
 
-        /// <summary>
-        /// Adds a layer to the world
-        /// </summary>
-        /// <param name="layer">the layer to add</param>
         public void AddLayer(Layer layer)
         {
             if (!Layers.Contains(layer))
@@ -234,20 +154,12 @@ namespace AxisEngine
             }
         }
 
-        /// <summary>
-        /// adds several layers to the world
-        /// </summary>
-        /// <param name="layers">the layers to add</param>
         public void AddLayers(IEnumerable<Layer> layers)
         {
             foreach (Layer layer in layers)
                 AddLayer(layer);
         }
 
-        /// <summary>
-        /// draws the world
-        /// </summary>
-        /// <param name="t">the time since the last draw</param>
         public virtual void Draw(GameTime t)
         {
             if (Visible)
@@ -257,20 +169,12 @@ namespace AxisEngine
             }
         }
 
-        /// <summary>
-        /// removes all layers that match a specified condition
-        /// </summary>
-        /// <param name="match">the condition to match</param>
         public void RemoveAllLayersWhere(Predicate<Layer> match)
         {
             foreach (Layer layer in Layers.Where(x => match(x)))
                 RemoveLayer(layer);
         }
 
-        /// <summary>
-        /// removes a layer from the world
-        /// </summary>
-        /// <param name="layer">the layer to remove</param>
         public void RemoveLayer(Layer layer)
         {
             if (Layers.Contains(layer))
@@ -280,10 +184,6 @@ namespace AxisEngine
             }
         }
 
-        /// <summary>
-        /// removes a layer at a given index
-        /// </summary>
-        /// <param name="index">the index to remove the layer from</param>
         public void RemoveLayerAt(int index)
         {
             if (index >= 0 && index < Layers.Count)
@@ -295,29 +195,17 @@ namespace AxisEngine
             else throw new IndexOutOfRangeException();
         }
 
-        /// <summary>
-        /// removes layers within a given index range
-        /// </summary>
-        /// <param name="index">the index to start at</param>
-        /// <param name="count">the amount of consecutive layers to remove</param>
         public void RemoveLayersInRange(int index, int count)
         {
             for (int i = 0; i < count; i++)
                 RemoveLayerAt(index + i);
         }
 
-        /// <summary>
-        /// sorts the layers by update order
-        /// </summary>
         public void SortUpdateOrder()
         {
             Layers.OrderBy(x => x.UpdateOrder);
         }
 
-        /// <summary>
-        /// updates the world
-        /// </summary>
-        /// <param name="t">the time since the last update</param>
         public virtual void Update(GameTime t)
         {
             if (Enabled)
@@ -330,20 +218,11 @@ namespace AxisEngine
             }
         }
 
-        /// <summary>
-        /// handles when one of the layers have an update order that has changed
-        /// </summary>
-        /// <param name="sender">the sender of the event</param>
-        /// <param name="e">the arguments that go along with the event</param>
         private void layer_UpdateOrderChanged(object sender, EventArgs e)
         {
             SortUpdateOrder();
         }
 
-        /// <summary>
-        /// handles the adding of a layer to the world
-        /// </summary>
-        /// <param name="layer">the layer that was added</param>
         private void OnLayerAdded(Layer layer)
         {
             if (LayerAdded != null) LayerAdded(this, new LayerEventArgs() { Layer = layer });
@@ -355,10 +234,6 @@ namespace AxisEngine
             SortUpdateOrder();
         }
 
-        /// <summary>
-        /// handles the removing of a layer
-        /// </summary>
-        /// <param name="layer">the layer that was removed</param>
         private void OnLayerRemoved(Layer layer)
         {
             if (LayerRemoved != null) LayerRemoved(this, new LayerEventArgs() { Layer = layer });
@@ -369,6 +244,7 @@ namespace AxisEngine
             }
             catch (Exception) { }
         }
+
         #endregion Methods
     }
 }
