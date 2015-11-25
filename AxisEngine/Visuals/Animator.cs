@@ -25,11 +25,7 @@ namespace AxisEngine.Visuals
             DestinationRectangle = null;
         }
 
-        public Animation CurrentAnimation
-        {
-            get { return _animations[_currentAnimation]; }
-        }
-
+        #region IDRAWMANAGEABLE
         public Rectangle? DestinationRectangle { get; set; }
 
         public Rectangle? SourceRectangle
@@ -56,5 +52,16 @@ namespace AxisEngine.Visuals
         public Color Color { get; set; }
 
         public Vector2 Origin { get; set; }
+        #endregion IDRAWMANAGEABLE
+        
+        public Animation CurrentAnimation
+        {
+            get { return _animations[_currentAnimation]; }
+        }
+
+        protected override void UpdateThis(GameTime t)
+        {
+            CurrentAnimation.Update(t);
+        }
     }
 }

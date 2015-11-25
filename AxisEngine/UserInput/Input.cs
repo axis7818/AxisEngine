@@ -265,7 +265,7 @@ namespace AxisEngine.UserInput
             }
         }
 
-        public override void UpdateThis(GameTime t)
+        protected override void UpdateThis(GameTime t)
         {
             // update the states
             LastState_Keyboard = State_Keyboard;

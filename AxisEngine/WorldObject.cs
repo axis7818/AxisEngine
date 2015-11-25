@@ -261,12 +261,16 @@ namespace AxisEngine
             if (Enabled)
             {
                 UpdateThis(t);
+                UpdateComponents(t);
             }
         }
 
-        public virtual void UpdateThis(GameTime t)
+        /// <summary>
+        /// Meant to be overriden completely (no base call)
+        /// </summary>
+        protected virtual void UpdateThis(GameTime t)
         {
-            UpdateComponents(t);
+            
         }
 
         protected virtual void OnLayerChanged(Layer layer)

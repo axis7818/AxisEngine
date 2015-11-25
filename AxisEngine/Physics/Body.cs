@@ -47,7 +47,7 @@ namespace AxisEngine.Physics
             }
         }
 
-        public override void UpdateThis(GameTime t)
+        protected override void UpdateThis(GameTime t)
         {
             if (!Parameters.Static)
             {
