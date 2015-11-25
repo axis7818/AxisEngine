@@ -16,17 +16,22 @@ namespace AxisEngine.Visuals
         private int _totalCells;
         private float _frameTime;
         private float _timer;
+        private bool _finishBeforeTransition;
+        private bool _waitingForFinish;
 
         /// <summary>
         /// totalCells is the number of occupied cells in "reading" order (left -> right, top -> bottom)
         /// if totalCells is 0 or less, it is assumed that all cells are used.
         /// Duration is in milliseconds
         /// </summary>
-        public Animation(Texture2D atlas, float duration, int rows, int columns, int totalCells = 0)
+        public Animation(Texture2D atlas, float duration, int rows, int columns, int totalCells = 0, bool finishBeforeTransition = false)
         {
+            if (atlas == null)
+                throw new ArgumentNullException();
+
             _atlas = atlas;
-            _rows = rows;
-            _columns = columns;
+            _rows = rows > 0 ? rows : 1;
+            _columns = columns > 0 ? columns : 1;
             _current = 0;
             _totalCells = totalCells > 0 ?
                 totalCells :
@@ -35,20 +40,18 @@ namespace AxisEngine.Visuals
             _timer = 0;
             _cellWidth = atlas.Width / _columns;
             _cellHeight = atlas.Height / _rows;
+            _finishBeforeTransition = finishBeforeTransition;
+            _waitingForFinish = false;
 
             _sourceRectangle = new Rectangle(0, 0, _cellWidth, _cellHeight);
             ResetSourceRectangle();
         }
 
-        public void Update(GameTime t)
+        public event EventHandler<AnimationEventArgs> AnimationFinished;
+
+        public bool FinishBeforeTransition
         {
-            _timer += t.ElapsedGameTime.Milliseconds;
-            if(_timer > _frameTime)
-            {
-                _timer %= _frameTime;
-                _current = (_current + 1) % _totalCells;
-                ResetSourceRectangle();
-            }
+            get { return _finishBeforeTransition; }
         }
 
         public Texture2D Texture
@@ -67,6 +70,24 @@ namespace AxisEngine.Visuals
             set { _frameTime = value / _totalCells; }
         }
 
+        public void Update(GameTime t)
+        {
+            _timer += t.ElapsedGameTime.Milliseconds;
+            if(_timer > _frameTime)
+            {
+                _timer %= _frameTime;
+                _current = (_current + 1) % _totalCells;
+                ResetSourceRectangle();
+
+                if (_waitingForFinish && _current == 0)
+                {
+                    _waitingForFinish = false;
+                    if (AnimationFinished != null)
+                        AnimationFinished(this, new AnimationEventArgs());
+                }
+            }
+        }
+
         public void Reset()
         {
             _timer = 0;
@@ -80,6 +101,11 @@ namespace AxisEngine.Visuals
             int col = _current % _columns;
             _sourceRectangle.X = col * _cellWidth;
             _sourceRectangle.Y = row * _cellHeight;
+        }
+
+        private void WaitForEnd()
+        {
+            _waitingForFinish = true;
         }
     }
 }
