@@ -6,5 +6,13 @@ using System.Threading.Tasks;
 
 namespace AxisEngine.Visuals
 {
-    public class AnimationEventArgs : EventArgs { }
+    public class AnimationEventArgs : EventArgs
+    {
+        public Animation Animation;
+
+        public AnimationEventArgs(Animation animation)
+        {
+            Animation = animation;
+        }
+    }
 }

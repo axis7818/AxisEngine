@@ -83,7 +83,8 @@ namespace AxisEngine.Visuals
                 {
                     _waitingForFinish = false;
                     if (AnimationFinished != null)
-                        AnimationFinished(this, new AnimationEventArgs());
+                        AnimationFinished(this, new AnimationEventArgs(this));
+                    AnimationFinished = null;
                 }
             }
         }
@@ -103,7 +104,7 @@ namespace AxisEngine.Visuals
             _sourceRectangle.Y = row * _cellHeight;
         }
 
-        private void WaitForEnd()
+        public void WaitForEnd()
         {
             _waitingForFinish = true;
         }

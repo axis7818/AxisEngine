@@ -13,20 +13,14 @@ namespace AxisEngine.Visuals
         private string _currentAnimation;
         private Vector2 _offset;
 
-        public Animator(Texture2D defaultTexture)
+        public Animator(Animation defaultAnimation)
         {
             _offset = Vector2.Zero;
 
             _animations = new Dictionary<string, Animation>();
             _currentAnimation = DEFAULT;
-            _animations[DEFAULT] = new Animation(atlas: defaultTexture,
-                                                 duration: 1000,
-                                                 rows: 1,
-                                                 columns: 1,
-                                                 totalCells: 1,
-                                                 finishBeforeTransition: false);
-
-            
+            _animations[DEFAULT] = defaultAnimation;
+                        
             DrawOrder = 0;
             Color = Color.White;
             Origin = Vector2.Zero;
@@ -37,7 +31,6 @@ namespace AxisEngine.Visuals
         }
 
         #region IDRAWMANAGEABLE
-
         public Rectangle? DestinationRectangle { get; set; }
 
         public Rectangle? SourceRectangle
@@ -64,7 +57,6 @@ namespace AxisEngine.Visuals
         public Color Color { get; set; }
 
         public Vector2 Origin { get; set; }
-
         #endregion IDRAWMANAGEABLE
 
         public Animation CurrentAnimation
@@ -87,11 +79,20 @@ namespace AxisEngine.Visuals
 
             if (!CurrentAnimation.FinishBeforeTransition)
             {
-                //TODO: fill in transitioning animations immediately
+                // Switch immediately to the new animation
+                _currentAnimation = name;
+                CurrentAnimation.Reset();                
             }
             else
             {
-                //TODO: fill in transitioning animations on finishing 
+                // Set the current animation to wait for the end, upon finishing, switch animations
+                CurrentAnimation.WaitForEnd();
+                EventHandler<AnimationEventArgs> animSwitch = (sender, args) =>
+                {
+                    _currentAnimation = name;
+                    CurrentAnimation.Reset();
+                };
+                CurrentAnimation.AnimationFinished += animSwitch;
             }
         }
     }
