@@ -48,19 +48,19 @@ namespace AxisEngine.Visuals
 
         public GraphicsDevice GraphicsDevice { get; private set; }
 
-        public Vector2 ScreenCenter
+        public Point ScreenCenter
         {
             get
             {
-                return new Vector2(GraphicsDevice.Viewport.Width * 0.5f, GraphicsDevice.Viewport.Height * 0.5f);
+                return new Point(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2);
             }
         }
 
-        public Vector2 ScreenSize
+        public Point ScreenSize
         {
             get
             {
-                return new Vector2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+                return new Point(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
             }
         }
 

@@ -51,6 +51,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AxisExtensions.cs" />
     <Compile Include="Circle.cs" />
     <Compile Include="AxisDebug\Grid.cs" />
     <Compile Include="AxisDebug\Log.cs" />

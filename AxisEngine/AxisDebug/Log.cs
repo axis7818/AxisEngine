@@ -70,8 +70,8 @@ namespace AxisEngine.Debug
             LogWindow.Width = 480;
             LogWindow.Height = 860;
             LogWindow.WindowStartupLocation = WindowStartupLocation.Manual;
-            LogWindow.Left = 20;
-            LogWindow.Top = 200;
+            LogWindow.Left = 10;
+            LogWindow.Top = 20;
             LogWindow.Activated += LogWindow_Activated;
             LogWindow.Deactivated += LogWindow_Deactivated;
 
