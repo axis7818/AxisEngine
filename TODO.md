@@ -35,7 +35,17 @@ The features of the engine have only been tested independently and in very contr
 * elements to add
     * buttons
     * text fields
-    * color picker
+    * color picker ?
     * tab control
+    * slider
 * customizable images for the elements
 * make all object clear and easy to use
+
+## XML Templating?
+* it would be awesome if there were a way to make an xml template file for building worlds and layers.
+
+## Predefined game class template
+* for the game
+* for worlds
+* for layers
+* for worldobjects

@@ -61,10 +61,7 @@ namespace AxisEngine.Visuals
 
         public Animation CurrentAnimation
         {
-            get
-            {
-                return _animations.ContainsKey(_currentAnimation) ? _animations[_currentAnimation] : _animations[DEFAULT];
-            }
+            get { return _animations[_currentAnimation]; }
         }
 
         protected override void UpdateThis(GameTime t)

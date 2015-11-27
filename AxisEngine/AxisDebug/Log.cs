@@ -8,42 +8,38 @@ namespace AxisEngine.Debug
 {
     public static class Log
     {
-        private static int _maxMessageCount = 100;
+        private static int MAX_MESSAGE_COUNT = 100;
 
-        private static Queue<string> _logQueue = new Queue<string>(_maxMessageCount);
-
-        private static bool ShowingWindow = false;
-
-        private static System.Windows.Forms.RichTextBox LogTextSource;
-
-        private static RichTextBox LogText;
-
-        private static Window LogWindow;
+        private static Queue<string> _logQueue = new Queue<string>(MAX_MESSAGE_COUNT);
+        private static bool _showingWindow = false;
+        private static System.Windows.Forms.RichTextBox _logTextSource;
+        private static RichTextBox _logText;
+        private static Window _logWindow;
 
         public static int MaxMessageCount
         {
             get
             {
-                return _maxMessageCount;
+                return MAX_MESSAGE_COUNT;
             }
             set
             {
-                _maxMessageCount = value;
+                MAX_MESSAGE_COUNT = value;
             }
         }
 
         public static void CloseWindow()
         {
-            if (ShowingWindow)
+            if (_showingWindow)
             {
                 try
                 {
-                    LogWindow.Close();
-                    LogTextSource = null;
-                    LogWindow = null;
-                    ShowingWindow = false;
-                    LogWindow.Activated -= LogWindow_Activated;
-                    LogWindow.Deactivated -= LogWindow_Deactivated;
+                    _logWindow.Close();
+                    _logTextSource = null;
+                    _logWindow = null;
+                    _showingWindow = false;
+                    _logWindow.Activated -= _logWindow_Activated;
+                    _logWindow.Deactivated -= _logWindow_Deactivated;
                 }
                 catch (Exception) { }
             }
@@ -51,13 +47,13 @@ namespace AxisEngine.Debug
 
         public static void ShowWindow()
         {
-            if (!ShowingWindow)
+            if (!_showingWindow)
             {
                 try
                 {
                     BuildWindow();
-                    LogWindow.Show();
-                    ShowingWindow = true;
+                    _logWindow.Show();
+                    _showingWindow = true;
                 }
                 catch (Exception) { }
             }
@@ -65,39 +61,39 @@ namespace AxisEngine.Debug
 
         private static void BuildWindow()
         {
-            LogWindow = new Window();
-            LogWindow.Title = "Axis Engine Debug Log";
-            LogWindow.Width = 480;
-            LogWindow.Height = 860;
-            LogWindow.WindowStartupLocation = WindowStartupLocation.Manual;
-            LogWindow.Left = 10;
-            LogWindow.Top = 20;
-            LogWindow.Activated += LogWindow_Activated;
-            LogWindow.Deactivated += LogWindow_Deactivated;
+            _logWindow = new Window();
+            _logWindow.Title = "Axis Engine Debug Log";
+            _logWindow.Width = 480;
+            _logWindow.Height = 860;
+            _logWindow.WindowStartupLocation = WindowStartupLocation.Manual;
+            _logWindow.Left = 10;
+            _logWindow.Top = 20;
+            _logWindow.Activated += _logWindow_Activated;
+            _logWindow.Deactivated += _logWindow_Deactivated;
 
-            LogTextSource = new System.Windows.Forms.RichTextBox();
+            _logTextSource = new System.Windows.Forms.RichTextBox();
 
-            LogText = new RichTextBox();
-            LogText.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
-            LogText.Margin = new Thickness(5);
+            _logText = new RichTextBox();
+            _logText.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
+            _logText.Margin = new Thickness(5);
 
             StackPanel stackPanel = new StackPanel();
-            stackPanel.Children.Add(LogText);
+            stackPanel.Children.Add(_logText);
             ScrollViewer scroller = new ScrollViewer();
             scroller.Content = stackPanel;
             scroller.ScrollToBottom();
 
-            LogWindow.Content = scroller;
+            _logWindow.Content = scroller;
         }
 
-        private static void LogWindow_Deactivated(object sender, EventArgs e)
+        private static void _logWindow_Deactivated(object sender, EventArgs e)
         {
-            LogText.VerticalScrollBarVisibility = ScrollBarVisibility.Hidden;
+            _logText.VerticalScrollBarVisibility = ScrollBarVisibility.Hidden;
         }
 
-        private static void LogWindow_Activated(object sender, EventArgs e)
+        private static void _logWindow_Activated(object sender, EventArgs e)
         {
-            LogText.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
+            _logText.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
         }
 
         public static void Write(int x)
@@ -122,12 +118,12 @@ namespace AxisEngine.Debug
             _logQueue.Enqueue(message);
 
             // display the message
-            if (ShowingWindow)
+            if (_showingWindow)
             {
                 // some hackery to get the functionality of the Forms.RichTextBox and the display of the Controls.RichTextBox
-                LogTextSource.Lines = _logQueue.ToArray();
-                LogText.Document.Blocks.Clear();
-                LogText.Document.Blocks.Add(new Paragraph(new Run(LogTextSource.Text)));
+                _logTextSource.Lines = _logQueue.ToArray();
+                _logText.Document.Blocks.Clear();
+                _logText.Document.Blocks.Add(new Paragraph(new Run(_logTextSource.Text)));
             }
         }
     }

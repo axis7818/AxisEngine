@@ -3,35 +3,46 @@ using System.Collections.Generic;
 
 namespace AxisEngine
 {
-    //public static class WorldManager
-    //{
-    //    private static World _currentWorld;
-    //    private static Dictionary<string, World> Worlds;
+    public class WorldManager
+    {
+        private const string DEFAULT = "Default";
+        private string _currentWorld;
+        private Dictionary<string, World> _worlds;
 
-    //    static WorldManager()
-    //    {
-    //        Worlds = new Dictionary<string, World>();
-    //    }
+        WorldManager(World defaultWorld)
+        {
+            _worlds = new Dictionary<string, World>();
+            _currentWorld = DEFAULT;
+            _worlds[DEFAULT] = defaultWorld;
+            CurrentWorld.Initialize();
+        }
 
-    //    public static event EventHandler<WorldChangingEventArgs> CurrentWorldChanged;
+        public event EventHandler<WorldChangingEventArgs> CurrentWorldChanging;
 
-    //    public static World CurrentWorld
-    //    {
-    //        get
-    //        {
-    //            return _currentWorld;
-    //        }
-    //        private set
-    //        {
-    //            OnCurrentWorldChanging(_currentWorld, value);
-    //            _currentWorld = value;
-    //        }
-    //    }
+        public World CurrentWorld
+        {
+            get { return _worlds[_currentWorld]; }
+        }
 
-    //    private static void OnCurrentWorldChanging(World oldWorld, World newWorld)
-    //    {
-    //        if (CurrentWorldChanged != null)
-    //            CurrentWorldChanged(null, new WorldChangingEventArgs(oldWorld, newWorld));
-    //    }
-    //}
+        public void SetCurrentWorld(string world)
+        {
+            // check for valid world
+            if (!_worlds.ContainsKey(world))
+                throw new ArgumentException("World Manager does not have the world: " + world);
+
+            // fire the world changing event
+            WorldChangingEventArgs args = new WorldChangingEventArgs(CurrentWorld, _worlds[world]);
+            if (CurrentWorldChanging != null)
+                CurrentWorldChanging(this, args);
+
+            // check if the change was cancelled
+            if (args.Cancel)
+                return;
+
+            // change the world
+            CurrentWorld.Dispose();
+            _currentWorld = world;
+            CurrentWorld.Initialize();
+        }
+    }
 }

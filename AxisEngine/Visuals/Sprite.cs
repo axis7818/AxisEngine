@@ -20,24 +20,28 @@ namespace AxisEngine.Visuals
             _offset = Vector2.Zero;
         }
 
+        public new Vector2 Scale
+        {
+            get { return base.Scale; }
+            set
+            {
+                base.Scale = value;
+                _offset *= value;
+            }
+        }
+
         public Rectangle? SourceRectangle { get; set; }
 
         public Rectangle? DestinationRectangle { get; set; }
 
         public float LayerDepth
         {
-            get
-            {
-                return 0;
-            }
+            get { return 0; }
         }
 
         public Vector2 DrawPosition
         {
-            get
-            {
-                return Position + _offset;
-            }
+            get { return Position + _offset; }
         }
 
         public int DrawOrder { get; set; }
@@ -50,14 +54,14 @@ namespace AxisEngine.Visuals
 
         public Texture2D Texture { get; set; }
 
-        public void Offset(Vector2 offset)
+        public void Offset(Vector2 amount)
         {
-            _offset = offset;
+            _offset = amount;
         }
 
         public void Center()
         {
-            _offset = new Vector2(-Texture.Width * 0.5f, -Texture.Height * 0.5f);
+            _offset = new Vector2(-Texture.Width * Scale.X * 0.5f, -Texture.Height * Scale.Y * 0.5f);
         }
 
         public void Trim(int margin)

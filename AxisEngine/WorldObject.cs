@@ -7,20 +7,13 @@ namespace AxisEngine
     public abstract class WorldObject : IUpdateable
     {
         public int _updateOrder;
-
         private bool _enabled;
-
         private Layer _layer;
-
         private WorldObject _owner;
-
         private Vector2 _position;
-
         private float _rotation;
-
         private Vector2 _scale;
-
-        private List<WorldObject> Components;
+        private List<WorldObject> _components;
 
         public WorldObject()
         {
@@ -51,10 +44,7 @@ namespace AxisEngine
 
         public bool Enabled
         {
-            get
-            {
-                return _enabled;
-            }
+            get { return _enabled; }
             set
             {
                 _enabled = value;
@@ -64,18 +54,12 @@ namespace AxisEngine
 
         public bool HasOwner
         {
-            get
-            {
-                return Owner == null ? false : true;
-            }
+            get { return Owner == null ? false : true; }
         }
 
         public Layer Layer
         {
-            get
-            {
-                return _layer;
-            }
+            get { return _layer; }
             set
             {
                 _layer = value;
@@ -85,10 +69,7 @@ namespace AxisEngine
 
         public WorldObject Owner
         {
-            get
-            {
-                return _owner;
-            }
+            get { return _owner; }
             set
             {
                 _owner = value;
@@ -111,22 +92,13 @@ namespace AxisEngine
                 }
                 return pos;
             }
-            set
-            {
-                BasePosition = value;
-            }
+            set { BasePosition = value; }
         }
 
         public Vector2 BasePosition
         {
-            get
-            {
-                return _position;
-            }
-            private set
-            {
-                _position = value;
-            }
+            get { return _position; }
+            private set { _position = value; }
         }
 
         public float Rotation
@@ -140,22 +112,13 @@ namespace AxisEngine
                 }
                 return rot;
             }
-            set
-            {
-                BaseRotation = value;
-            }
+            set { BaseRotation = value; }
         }
 
         public float BaseRotation
         {
-            get
-            {
-                return _rotation;
-            }
-            private set
-            {
-                _rotation = value;
-            }
+            get { return _rotation; }
+            private set { _rotation = value; }
         }
 
         public Vector2 Scale
@@ -169,30 +132,18 @@ namespace AxisEngine
                 }
                 return scale;
             }
-            set
-            {
-                BaseScale = value;
-            }
+            set { _scale = value; }
         }
 
         public Vector2 BaseScale
         {
-            get
-            {
-                return _scale;
-            }
-            private set
-            {
-                _scale = value;
-            }
+            get { return _scale; }
+            private set { _scale = value; }
         }
 
         public int UpdateOrder
         {
-            get
-            {
-                return _updateOrder;
-            }
+            get { return _updateOrder; }
             set
             {
                 _updateOrder = value;
@@ -215,9 +166,9 @@ namespace AxisEngine
 
         public void AddComponent(WorldObject component)
         {
-            if (!Components.Contains(component))
+            if (!_components.Contains(component))
             {
-                Components.Add(component);
+                _components.Add(component);
                 if (component.Owner != this)
                 {
                     component.Owner = this;
@@ -229,21 +180,19 @@ namespace AxisEngine
         public void AddComponents(IEnumerable<WorldObject> components)
         {
             foreach (WorldObject wo in components)
-            {
                 AddComponent(wo);
-            }
         }
 
         public WorldObject[] GetComponents()
         {
-            return Components.ToArray();
+            return _components.ToArray();
         }
 
         public void RemoveComponent(WorldObject component)
         {
-            if (Components.Contains(component))
+            if (_components.Contains(component))
             {
-                Components.Remove(component);
+                _components.Remove(component);
                 OnComponentRemoved(component);
             }
         }
@@ -251,9 +200,7 @@ namespace AxisEngine
         public void RemoveComponents(IEnumerable<WorldObject> components)
         {
             foreach (WorldObject wo in components)
-            {
                 RemoveComponent(wo);
-            }
         }
 
         public void Update(GameTime t)
@@ -280,7 +227,7 @@ namespace AxisEngine
 
             if (layer != null)
             {
-                foreach (WorldObject wo in Components)
+                foreach (WorldObject wo in _components)
                     wo.Layer = layer;
             }
         }
@@ -288,7 +235,7 @@ namespace AxisEngine
         private void Initialize(WorldObject owner = null, Vector2? position = null, params WorldObject[] components)
         {
             Owner = owner;
-            Components = new List<WorldObject>(components);
+            _components = new List<WorldObject>(components);
 
             BasePosition = position ?? Vector2.Zero;
             BaseScale = new Vector2(1, 1);
@@ -320,11 +267,9 @@ namespace AxisEngine
 
         private void UpdateComponents(GameTime t)
         {
-            foreach (WorldObject wo in Components)
-            {
+            foreach (WorldObject wo in _components)
                 if (wo.Enabled)
                     wo.Update(t);
-            }
         }
     }
 }
