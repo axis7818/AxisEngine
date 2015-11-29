@@ -9,7 +9,7 @@ namespace AxisEngine
         private string _currentWorld;
         private Dictionary<string, World> _worlds;
 
-        WorldManager(World defaultWorld)
+        public WorldManager(World defaultWorld)
         {
             _worlds = new Dictionary<string, World>();
             _currentWorld = DEFAULT;
@@ -22,6 +22,11 @@ namespace AxisEngine
         public World CurrentWorld
         {
             get { return _worlds[_currentWorld]; }
+        }
+
+        public void AddWorld(string name, World world)
+        {
+            _worlds[name] = world;
         }
 
         public void SetCurrentWorld(string world)

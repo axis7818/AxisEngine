@@ -74,6 +74,7 @@
     <Compile Include="Visuals\DrawManager.cs" />
     <Compile Include="Visuals\IDrawManageable.cs" />
     <Compile Include="Visuals\Sprite.cs" />
+    <Compile Include="Visuals\TextSprite.cs" />
     <Compile Include="World.cs" />
     <Compile Include="WorldChangingEventArgs.cs" />
     <Compile Include="WorldManager.cs" />

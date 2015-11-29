@@ -7,7 +7,7 @@ namespace AxisEngine.Visuals
 {
     public class Animator : WorldObject, IDrawManageable
     {
-        private const string DEFAULT = "DEFAULT_ANIMATION";
+        public const string DEFAULT = "DEFAULT_ANIMATION";
 
         private Dictionary<string, Animation> _animations;
         private string _currentAnimation;
@@ -28,6 +28,7 @@ namespace AxisEngine.Visuals
             SpriteEffect = SpriteEffects.None;
             LayerDepth = 0;
             DestinationRectangle = null;
+            Visible = true;
         }
 
         #region IDRAWMANAGEABLE
@@ -57,6 +58,8 @@ namespace AxisEngine.Visuals
         public Color Color { get; set; }
 
         public Vector2 Origin { get; set; }
+
+        public bool Visible { get; set; }
         #endregion IDRAWMANAGEABLE
 
         public Animation CurrentAnimation
@@ -69,27 +72,43 @@ namespace AxisEngine.Visuals
             CurrentAnimation.Update(t);
         }
 
+        public void RemoveAnimation(string name)
+        {
+            _animations.Remove(name);
+        }
+
+        public void AddAnimation(string name, Animation anim)
+        {
+            if (_animations.ContainsKey(name))
+                throw new ArgumentException("animation [" + name + "] is already in the animator");
+
+            _animations[name] = anim;
+        }
+
         public void SetCurrentAnimation(string name)
         {
             if (!_animations.ContainsKey(name))
                 throw new ArgumentException("cannot find the animation: " + name);
 
-            if (!CurrentAnimation.FinishBeforeTransition)
+            if(name != _currentAnimation)
             {
-                // Switch immediately to the new animation
-                _currentAnimation = name;
-                CurrentAnimation.Reset();                
-            }
-            else
-            {
-                // Set the current animation to wait for the end, upon finishing, switch animations
-                CurrentAnimation.WaitForEnd();
-                EventHandler<AnimationEventArgs> animSwitch = (sender, args) =>
+                if (!CurrentAnimation.FinishBeforeTransition)
                 {
+                    // Switch immediately to the new animation
                     _currentAnimation = name;
-                    CurrentAnimation.Reset();
-                };
-                CurrentAnimation.AnimationFinished += animSwitch;
+                    CurrentAnimation.Reset();                
+                }
+                else
+                {
+                    // Set the current animation to wait for the end, upon finishing, switch animations
+                    CurrentAnimation.WaitForEnd();
+                    EventHandler<AnimationEventArgs> animSwitch = (sender, args) =>
+                    {
+                        _currentAnimation = name;
+                        CurrentAnimation.Reset();
+                    };
+                    CurrentAnimation.AnimationFinished += animSwitch;
+                }
             }
         }
     }

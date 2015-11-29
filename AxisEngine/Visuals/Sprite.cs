@@ -16,10 +16,12 @@ namespace AxisEngine.Visuals
             SpriteEffect = SpriteEffects.None;
             SourceRectangle = null;
             DestinationRectangle = null;
+            Visible = true;
 
             _offset = Vector2.Zero;
         }
 
+        #region IDRAWMANAGEABLE
         public new Vector2 Scale
         {
             get { return base.Scale; }
@@ -53,6 +55,9 @@ namespace AxisEngine.Visuals
         public SpriteEffects SpriteEffect { get; set; }
 
         public Texture2D Texture { get; set; }
+
+        public bool Visible { get; set; }
+        #endregion IDRAWMANAGEABLE
 
         public void Offset(Vector2 amount)
         {

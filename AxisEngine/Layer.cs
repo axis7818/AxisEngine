@@ -175,6 +175,8 @@ namespace AxisEngine
                 CollisionManager.AddTrigger(worldObject as Trigger);
             else if (worldObject is IDrawManageable)
                 DrawManager.AddDrawable(worldObject as IDrawManageable);
+            else if (worldObject is TextSprite)
+                DrawManager.AddTextSprite(worldObject as TextSprite);
 
             // subscribe components recursively
             foreach (WorldObject wo in worldObject.GetComponents())
@@ -203,6 +205,12 @@ namespace AxisEngine
                 IDrawManageable draw = worldObject as IDrawManageable;
                 if (DrawManager.Contains(draw))
                     DrawManager.Remove(draw);
+            }
+            else if (worldObject is TextSprite)
+            {
+                TextSprite text = worldObject as TextSprite;
+                if (DrawManager.Contains(text))
+                    DrawManager.Remove(text);
             }
 
             // unsubscribe the components recursively

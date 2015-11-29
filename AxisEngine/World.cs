@@ -40,11 +40,8 @@ namespace AxisEngine
         {
             Graphics = graphics;
             GraphicsDevice = graphicsDevice;
-
             UpdateOrder = 0;
             DrawOrder = 0;
-
-            Initialize();
         }
 
         #region Events
@@ -134,14 +131,16 @@ namespace AxisEngine
             Visible = true;
 
             // do any custom loading
+            SetUpManagers(GraphicsDevice);
             Load();
         }
+
+        protected abstract void SetUpManagers(GraphicsDevice graphicsDevice);
 
         protected abstract void Load();
 
         public void Dispose()
-        {
-            // dispose of the layers and manager objects
+        { 
             Layers = null;
             CollisionManagers = null;
             DrawManagers = null;

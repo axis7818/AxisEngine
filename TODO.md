@@ -1,16 +1,13 @@
 # TODO
 List of things to do for AxisEngine
 
-## Rework the Animation Framework
-* simplify to just use a texture atlas.
-* no need for fancy effect animation that can be done in the art creation stage.
-* put the fancy things as instance variables that can apply to whole animations instead of individual frames.
-
 ## Start making a test game
 The features of the engine have only been tested independently and in very controlled environments. We need to make sure that all features will work together before adding other features.
 * Test all features that are currently implemented
     * physics
     * animation
+        * transitioning animations
+        * play-till-end animations
     * parent/child object relationships
     * debug features
 * Once all of that works and is implemented

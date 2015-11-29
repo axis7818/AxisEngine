@@ -26,5 +26,7 @@ namespace AxisEngine.Visuals
         Rectangle? SourceRectangle { get; }
 
         Rectangle? DestinationRectangle { get; }
+
+        bool Visible { get; }
     }
 }
