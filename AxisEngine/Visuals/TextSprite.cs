@@ -9,7 +9,7 @@ using AxisEngine;
 
 namespace AxisEngine.Visuals
 {
-    public class TextSprite : WorldObject
+    public class TextSprite : WorldObject, IDrawManageable
     {
         private SpriteFont _spriteFont;
         private int _drawOrder;
@@ -58,6 +58,11 @@ namespace AxisEngine.Visuals
                 if (VisibleChanged != null)
                     VisibleChanged(this, EventArgs.Empty);
             }
+        }
+
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            spriteBatch.DrawString(SpriteFont, Text, Position, Color);
         }
 
         public static implicit operator string(TextSprite textSprite)

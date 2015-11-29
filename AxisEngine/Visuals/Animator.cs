@@ -12,6 +12,7 @@ namespace AxisEngine.Visuals
         private Dictionary<string, Animation> _animations;
         private string _currentAnimation;
         private Vector2 _offset;
+        private int _drawOrder;
 
         public Animator(Animation defaultAnimation)
         {
@@ -31,7 +32,8 @@ namespace AxisEngine.Visuals
             Visible = true;
         }
 
-        #region IDRAWMANAGEABLE
+        public event EventHandler<EventArgs> DrawOrderChanged;
+        
         public Rectangle? DestinationRectangle { get; set; }
 
         public Rectangle? SourceRectangle
@@ -53,14 +55,22 @@ namespace AxisEngine.Visuals
             get { return Position + _offset; }
         }
 
-        public int DrawOrder { get; set; }
+        public int DrawOrder
+        {
+            get { return _drawOrder; }
+            set
+            {
+                _drawOrder = value;
+                if (DrawOrderChanged != null)
+                    DrawOrderChanged(this, EventArgs.Empty);
+            }
+        }
 
         public Color Color { get; set; }
 
         public Vector2 Origin { get; set; }
 
         public bool Visible { get; set; }
-        #endregion IDRAWMANAGEABLE
 
         public Animation CurrentAnimation
         {
@@ -83,6 +93,20 @@ namespace AxisEngine.Visuals
                 throw new ArgumentException("animation [" + name + "] is already in the animator");
 
             _animations[name] = anim;
+        }
+
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw(Texture,
+                             DrawPosition,
+                             DestinationRectangle,
+                             SourceRectangle,
+                             Origin,
+                             Rotation,
+                             Scale,
+                             Color,
+                             SpriteEffect,
+                             LayerDepth);
         }
 
         public void SetCurrentAnimation(string name)

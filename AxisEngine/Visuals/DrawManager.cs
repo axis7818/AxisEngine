@@ -13,13 +13,11 @@ namespace AxisEngine.Visuals
         private bool _visible; 
         private SpriteBatch _spriteBatch;
         private List<IDrawManageable> _thingsToDraw;
-        private List<TextSprite> _textToDraw;
 
         public DrawManager(GraphicsDevice graphicsDevice)
         {
             // initialize some members
             _thingsToDraw = new List<IDrawManageable>();
-            _textToDraw = new List<TextSprite>();
             GraphicsDevice = graphicsDevice;
             _spriteBatch = new SpriteBatch(graphicsDevice);
 
@@ -66,55 +64,34 @@ namespace AxisEngine.Visuals
 
         public int Size
         {
-            get { return _thingsToDraw.Count + _textToDraw.Count; }
+            get { return _thingsToDraw.Count; }
         }
 
         public void AddDrawable(IDrawManageable toDraw)
         {
             _thingsToDraw.Add(toDraw);
+            toDraw.DrawOrderChanged += DrawOrderChanged;
             SortByUpdateOrder();
-        }
-
-        public void AddTextSprite(TextSprite textSprite)
-        {
-            _textToDraw.Add(textSprite);
         }
 
         public bool Contains(IDrawManageable test)
         {
             return _thingsToDraw.Contains(test);
         }
-
-        public bool Contains(TextSprite textSprite)
-        {
-            return _textToDraw.Contains(textSprite);
-        }
-
+        
         public virtual void Draw(GameTime t)
         {
             if (Visible)
             {
                 _spriteBatch.Begin();
 
-                foreach (IDrawManageable toDraw in _thingsToDraw)
-                    if(toDraw.Visible)
-                        _spriteBatch.Draw(toDraw.Texture,
-                                         toDraw.DrawPosition,
-                                         toDraw.DestinationRectangle,
-                                         toDraw.SourceRectangle,
-                                         toDraw.Origin,
-                                         toDraw.Rotation,
-                                         toDraw.Scale,
-                                         toDraw.Color,
-                                         toDraw.SpriteEffect,
-                                         toDraw.LayerDepth);
-
-                foreach (TextSprite text in _textToDraw)
-                    if(text.Visible)
-                        _spriteBatch.DrawString(text.SpriteFont, 
-                                                text.Text, 
-                                                text.Position, 
-                                                text.Color);
+                foreach(IDrawManageable toDraw in _thingsToDraw)
+                {
+                    if (toDraw.Visible)
+                    {
+                        toDraw.Draw(_spriteBatch);
+                    }
+                }
 
                 _spriteBatch.End();
             }
@@ -123,16 +100,17 @@ namespace AxisEngine.Visuals
         public void Remove(IDrawManageable toRemove)
         {
             _thingsToDraw.Remove(toRemove);
+            toRemove.DrawOrderChanged -= DrawOrderChangedHandler;
         }
-
-        public void Remove(TextSprite toRemove)
-        {
-            _textToDraw.Remove(toRemove);
-        }
-
+        
         private void SortByUpdateOrder()
         {
             _thingsToDraw = _thingsToDraw.OrderBy(x => x.DrawOrder).ToList();
+        }
+
+        private void DrawOrderChangedHandler(object sender, EventArgs args)
+        {
+            SortByUpdateOrder();
         }
 
         public IEnumerator GetEnumerator()

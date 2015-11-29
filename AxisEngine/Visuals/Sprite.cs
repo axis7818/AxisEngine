@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using System;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace AxisEngine.Visuals
@@ -6,6 +7,8 @@ namespace AxisEngine.Visuals
     public class Sprite : WorldObject, IDrawManageable
     {
         private Vector2 _offset;
+        private bool _visible;
+        private int _drawOrder;
 
         public Sprite(Texture2D texture)
         {
@@ -21,7 +24,10 @@ namespace AxisEngine.Visuals
             _offset = Vector2.Zero;
         }
 
-        #region IDRAWMANAGEABLE
+        public event EventHandler<EventArgs> VisibleChanged;
+
+        public event EventHandler<EventArgs> DrawOrderChanged;
+        
         public new Vector2 Scale
         {
             get { return base.Scale; }
@@ -46,7 +52,16 @@ namespace AxisEngine.Visuals
             get { return Position + _offset; }
         }
 
-        public int DrawOrder { get; set; }
+        public int DrawOrder
+        {
+            get { return _drawOrder; }
+            set
+            {
+                _drawOrder = value;
+                if (DrawOrderChanged != null)
+                    DrawOrderChanged(this, EventArgs.Empty);
+            }
+        }
 
         public Color Color { get; set; }
 
@@ -56,8 +71,16 @@ namespace AxisEngine.Visuals
 
         public Texture2D Texture { get; set; }
 
-        public bool Visible { get; set; }
-        #endregion IDRAWMANAGEABLE
+        public bool Visible
+        {
+            get { return _visible; }
+            set
+            {
+                _visible = value;
+                if (VisibleChanged != null)
+                    VisibleChanged(this, EventArgs.Empty);
+            }
+        }
 
         public void Offset(Vector2 amount)
         {
@@ -72,6 +95,20 @@ namespace AxisEngine.Visuals
         public void Trim(int margin)
         {
             SourceRectangle = new Rectangle(margin, margin, Texture.Width - 2 * margin, Texture.Height - 2 * margin);
+        }
+
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw(Texture,
+                             DrawPosition,
+                             DestinationRectangle,
+                             SourceRectangle,
+                             Origin,
+                             Rotation,
+                             Scale,
+                             Color,
+                             SpriteEffect,
+                             LayerDepth);
         }
     }
 }
