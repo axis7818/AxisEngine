@@ -31,17 +31,12 @@ namespace AxisEngine
         }
 
         public event EventHandler<WorldObjectEventArgs> ComponentAdded;
-
         public event EventHandler<WorldObjectEventArgs> ComponentRemoved;
-
         public event EventHandler<EventArgs> EnabledChanged;
-
         public event EventHandler<LayerEventArgs> LayerChanged;
-
         public event EventHandler<WorldObjectEventArgs> OwnerChanged;
-
         public event EventHandler<EventArgs> UpdateOrderChanged;
-
+        
         public bool Enabled
         {
             get { return _enabled; }
@@ -127,9 +122,7 @@ namespace AxisEngine
             {
                 Vector2 scale = _scale;
                 if (HasOwner)
-                {
                     scale *= Owner.Scale;
-                }
                 return scale;
             }
             set { _scale = value; }
@@ -147,7 +140,8 @@ namespace AxisEngine
             set
             {
                 _updateOrder = value;
-                if (UpdateOrderChanged != null) UpdateOrderChanged(this, new EventArgs());
+                if (UpdateOrderChanged != null)
+                    UpdateOrderChanged(this, new EventArgs());
             }
         }
 
@@ -157,12 +151,12 @@ namespace AxisEngine
             {
                 WorldObject result = this;
                 while (result.HasOwner)
-                {
                     result = result.Owner;
-                }
                 return result;
             }
         }
+
+        protected abstract void UpdateThis(GameTime t);
 
         public void AddComponent(WorldObject component)
         {
@@ -170,9 +164,7 @@ namespace AxisEngine
             {
                 _components.Add(component);
                 if (component.Owner != this)
-                {
                     component.Owner = this;
-                }
                 OnComponentAdded(component);
             }
         }
@@ -212,24 +204,14 @@ namespace AxisEngine
             }
         }
 
-        /// <summary>
-        /// Meant to be overriden completely (no base call)
-        /// </summary>
-        protected virtual void UpdateThis(GameTime t)
-        {
-            
-        }
-
         protected virtual void OnLayerChanged(Layer layer)
         {
             if (LayerChanged != null)
-                LayerChanged(this, new LayerEventArgs() { Layer = layer });
+                LayerChanged(this, new LayerEventArgs(layer));
 
             if (layer != null)
-            {
                 foreach (WorldObject wo in _components)
                     wo.Layer = layer;
-            }
         }
 
         private void Initialize(WorldObject owner = null, Vector2? position = null, params WorldObject[] components)

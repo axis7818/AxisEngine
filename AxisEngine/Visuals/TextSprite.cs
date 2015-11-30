@@ -26,9 +26,8 @@ namespace AxisEngine.Visuals
         }
 
         public event EventHandler<EventArgs> DrawOrderChanged;
-
         public event EventHandler<EventArgs> VisibleChanged;
-
+        
         public SpriteFont SpriteFont
         {
             get { return _spriteFont; }
@@ -63,6 +62,11 @@ namespace AxisEngine.Visuals
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.DrawString(SpriteFont, Text, Position, Color);
+        }
+
+        protected override void UpdateThis(GameTime t)
+        {
+            
         }
 
         public static implicit operator string(TextSprite textSprite)

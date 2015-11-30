@@ -5,23 +5,11 @@ namespace AxisEngine.Physics
     public class Body : WorldObject
     {
         public BodyParams Parameters;
-
         public Vector2 Velocity;
-
         private Vector2 ExternalForce;
-
         private Vector2 InternalForce;
-
         private WorldObject BaseObject;
-
-        private float TimeMultiplier
-        {
-            get
-            {
-                return Layer != null ? Layer.TimeManager.TimeMultiplier : 1;
-            }
-        }
-
+        
         public Body(BodyParams parameters)
         {
             // set Properties
@@ -29,6 +17,11 @@ namespace AxisEngine.Physics
             InternalForce = ExternalForce = Velocity = Vector2.Zero;
 
             base.OwnerChanged += OnOwnerChanged;
+        }
+
+        private float TimeMultiplier
+        {
+            get { return Layer != null ? Layer.TimeManager.TimeMultiplier : 1; }
         }
 
         public void AddExternalForce(Vector2 force)
@@ -41,10 +34,8 @@ namespace AxisEngine.Physics
             InternalForce += force;
 
             // restrict the length of the vector
-            if (InternalForce.Length() > Parameters.MaxInternalForce)
-            {
-                InternalForce = Vector2.Normalize(InternalForce) * Parameters.MaxInternalForce;
-            }
+            if (InternalForce.Length() > Parameters.MaxInternalForce) 
+                InternalForce = Vector2.Normalize(InternalForce) * Parameters.MaxInternalForce; 
         }
 
         protected override void UpdateThis(GameTime t)
@@ -78,8 +69,6 @@ namespace AxisEngine.Physics
                 // apply the velocity
                 BaseObject.Position += Velocity * TimeMultiplier;
             }
-
-            base.UpdateThis(t);
         }
 
         private void OnOwnerChanged(object sender, WorldObjectEventArgs args)

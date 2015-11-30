@@ -10,9 +10,7 @@ namespace AxisEngine
     public abstract class Layer : IUpdateable
     {
         private bool _enabled;
-
         private int _updateOrder;
-
         private List<WorldObject> WorldObjects;
 
         public Layer(CollisionManager collisionManager, DrawManager drawManager, TimeManager timeManager, params WorldObject[] worldObjects)
@@ -21,13 +19,10 @@ namespace AxisEngine
         }
 
         public event EventHandler<EventArgs> EnabledChanged;
-
         public event EventHandler<EventArgs> UpdateOrderChanged;
-
         public event EventHandler<WorldObjectEventArgs> WorldObjectAdded;
-
         public event EventHandler<WorldObjectEventArgs> WorldObjectRemoved;
-
+        
         public CollisionManager CollisionManager { get; private set; }
 
         public DrawManager DrawManager { get; private set; }
@@ -36,10 +31,7 @@ namespace AxisEngine
 
         public bool Enabled
         {
-            get
-            {
-                return _enabled;
-            }
+            get { return _enabled; }
             set
             {
                 _enabled = value;
@@ -49,16 +41,15 @@ namespace AxisEngine
 
         public int UpdateOrder
         {
-            get
-            {
-                return _updateOrder;
-            }
+            get { return _updateOrder; }
             set
             {
                 _updateOrder = value;
                 if (UpdateOrderChanged != null) UpdateOrderChanged(this, new EventArgs());
             }
         }
+
+        public abstract void UpdateThis(GameTime t);
 
         public void Add(WorldObject worldObject)
         {
@@ -93,7 +84,8 @@ namespace AxisEngine
                 WorldObjects.RemoveAt(index);
                 OnWorldObjectRemoved(wo);
             }
-            else throw new IndexOutOfRangeException();
+            else
+                throw new IndexOutOfRangeException();
         }
 
         public void RemoveRange(int index, int count)
@@ -114,11 +106,6 @@ namespace AxisEngine
                 foreach (WorldObject x in WorldObjects)
                     x.Update(scaledTime);
             }
-        }
-
-        public virtual void UpdateThis(GameTime t)
-        {
-            /* This is meant to be overriden */
         }
 
         protected void Initialize(CollisionManager collisionManager, DrawManager drawManager, TimeManager timeManager, params WorldObject[] worldObjects)

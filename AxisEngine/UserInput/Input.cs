@@ -281,8 +281,6 @@ namespace AxisEngine.UserInput
             MouseDeltaY = State_Mouse.Y - LastState_Mouse.Y;
             MouseScroll = State_Mouse.ScrollWheelValue;
             MouseDeltaScroll = State_Mouse.ScrollWheelValue - LastState_Mouse.ScrollWheelValue;
-
-            base.UpdateThis(t);
         }
     }
 }

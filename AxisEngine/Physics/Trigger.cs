@@ -1,41 +1,33 @@
 ﻿using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 namespace AxisEngine.Physics
 {
     public class Trigger : WorldObject
     {
         private bool _simple;
-
         private List<Circle> Circles;
-
         private List<Rectangle> Rectangles;
-
         private Point BoundsDimensions;
-
-        public Rectangle Bounds
-        {
-            get
-            {
-                return new Rectangle(new Point((int)Position.X, (int)Position.Y), BoundsDimensions);
-            }
-        }
-
-        public bool IsSimple
-        {
-            get
-            {
-                return _simple;
-            }
-        }
-
+                
         public Trigger(Point boundDimensions, IEnumerable<Circle> circles = null, IEnumerable<Rectangle> rectangles = null)
         {
             BoundsDimensions = boundDimensions;
             Circles = circles.ToList();
             Rectangles = rectangles.ToList();
             _simple = Circles == null && Rectangles == null;
+        }
+
+        public Rectangle Bounds
+        {
+            get { return new Rectangle(new Point((int)Position.X, (int)Position.Y), BoundsDimensions); }
+        }
+
+        public bool IsSimple
+        {
+            get { return _simple; }
         }
 
         public void Center()
@@ -110,6 +102,11 @@ namespace AxisEngine.Physics
                         trigger.Rectangles.Any(r => CollisionManager.Collides(r, C)));            // compare these circles with those rectangles
                 }
             }
+        }
+
+        protected override void UpdateThis(GameTime t)
+        {
+            
         }
     }
 }

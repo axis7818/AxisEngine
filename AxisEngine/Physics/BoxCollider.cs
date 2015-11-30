@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 
 namespace AxisEngine.Physics
 {
@@ -13,18 +14,12 @@ namespace AxisEngine.Physics
 
         public Rectangle Bounds
         {
-            get
-            {
-                return new Rectangle(Position.ToPoint(), Dimensions);
-            }
+            get { return new Rectangle(Position.ToPoint(), Dimensions); }
         }
 
         public Point CenterPoint
         {
-            get
-            {
-                return new Point((int)(Position.X + Dimensions.X * 0.5f), (int)(Position.Y + Dimensions.Y * 0.5f));
-            }
+            get { return new Point((int)(Position.X + Dimensions.X * 0.5f), (int)(Position.Y + Dimensions.Y * 0.5f)); }
         }
 
         public void Center()
@@ -35,6 +30,11 @@ namespace AxisEngine.Physics
         public bool Intersects(Trigger trigger)
         {
             return trigger.Intersects(Bounds);
+        }
+
+        protected override void UpdateThis(GameTime t)
+        {
+            
         }
     }
 }

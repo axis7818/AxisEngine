@@ -1,13 +1,11 @@
 ﻿using System;
+using Microsoft.Xna.Framework;
 
-//TODO: test the circle and make sure everything works
-
-namespace Microsoft.Xna.Framework
+namespace AxisEngine
 {
     public class Circle
     {
         private Point Position;
-
         private int Radius;
 
         public Circle(int x, int y, int radius)
@@ -24,66 +22,42 @@ namespace Microsoft.Xna.Framework
 
         public static Circle Empty
         {
-            get
-            {
-                return new Circle(0, 0, 0);
-            }
+            get { return new Circle(0, 0, 0); }
         }
 
         public int Bottom
         {
-            get
-            {
-                return Position.Y + Radius;
-            }
+            get { return Position.Y + Radius; }
         }
 
         public Point Center
         {
-            get
-            {
-                return Position;
-            }
+            get { return Position; }
         }
 
         public bool IsEmpty
         {
-            get
-            {
-                return Position.X == 0 && Position.Y == 0 && Radius == 0;
-            }
+            get { return Position.X == 0 && Position.Y == 0 && Radius == 0; }
         }
 
         public int Left
         {
-            get
-            {
-                return Position.X - Radius;
-            }
+            get { return Position.X - Radius; }
         }
 
         public int Right
         {
-            get
-            {
-                return Position.X + Radius;
-            }
+            get { return Position.X + Radius; }
         }
 
         public int Size
         {
-            get
-            {
-                return Radius;
-            }
+            get { return Radius; }
         }
 
         public int Top
         {
-            get
-            {
-                return Position.Y - Radius;
-            }
+            get { return Position.Y - Radius; }
         }
 
         public static Circle Intersect(Circle A, Circle B)

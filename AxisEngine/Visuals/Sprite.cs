@@ -25,7 +25,6 @@ namespace AxisEngine.Visuals
         }
 
         public event EventHandler<EventArgs> VisibleChanged;
-
         public event EventHandler<EventArgs> DrawOrderChanged;
         
         public new Vector2 Scale
@@ -109,6 +108,11 @@ namespace AxisEngine.Visuals
                              Color,
                              SpriteEffect,
                              LayerDepth);
+        }
+
+        protected override void UpdateThis(GameTime t)
+        {
+            
         }
     }
 }

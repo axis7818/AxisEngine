@@ -10,32 +10,18 @@ namespace AxisEngine
 {
     public abstract class World : IUpdateable, IDrawable
     {
-        #region Fields
-
         public Color BackgroundColor = Color.CornflowerBlue;
-
         protected Dictionary<string, CollisionManager> CollisionManagers;
-
         protected Dictionary<string, DrawManager> DrawManagers;
-
         protected Dictionary<string, TimeManager> TimeManagers;
-
         protected GraphicsDeviceManager Graphics;
-
         protected GraphicsDevice GraphicsDevice;
-
         protected List<Layer> Layers;
-
         private int _drawOrder;
-
         private bool _enabled;
-
         private int _updateOrder;
-
         private bool _visible;
-
-        #endregion Fields
-
+        
         public World(GraphicsDeviceManager graphics, GraphicsDevice graphicsDevice)
         {
             Graphics = graphics;
@@ -43,31 +29,17 @@ namespace AxisEngine
             UpdateOrder = 0;
             DrawOrder = 0;
         }
-
-        #region Events
-
+        
         public event EventHandler<EventArgs> DrawOrderChanged;
-
         public event EventHandler<EventArgs> EnabledChanged;
-
         public event EventHandler<LayerEventArgs> LayerAdded;
-
         public event EventHandler<LayerEventArgs> LayerRemoved;
-
         public event EventHandler<EventArgs> UpdateOrderChanged;
-
         public event EventHandler<EventArgs> VisibleChanged;
-
-        #endregion Events
-
-        #region Properties
-
+        
         public int DrawOrder
         {
-            get
-            {
-                return _drawOrder;
-            }
+            get { return _drawOrder; }
             set
             {
                 _drawOrder = value;
@@ -77,10 +49,7 @@ namespace AxisEngine
 
         public bool Enabled
         {
-            get
-            {
-                return _enabled;
-            }
+            get { return _enabled; }
             set
             {
                 _enabled = value;
@@ -90,10 +59,7 @@ namespace AxisEngine
 
         public int UpdateOrder
         {
-            get
-            {
-                return _updateOrder;
-            }
+            get { return _updateOrder; }
             set
             {
                 _updateOrder = value;
@@ -103,10 +69,7 @@ namespace AxisEngine
 
         public bool Visible
         {
-            get
-            {
-                return _visible;
-            }
+            get { return _visible; }
             set
             {
                 _visible = value;
@@ -114,10 +77,10 @@ namespace AxisEngine
             }
         }
 
-        #endregion Properties
-
-        #region Methods
-
+        protected abstract void SetUpManagers(GraphicsDevice graphicsDevice);
+        protected abstract void Load();
+        protected abstract void Unload();
+        
         public void Initialize()
         {
             // create the manager objects and layers object
@@ -135,10 +98,6 @@ namespace AxisEngine
             Load();
         }
 
-        protected abstract void SetUpManagers(GraphicsDevice graphicsDevice);
-
-        protected abstract void Load();
-
         public void Dispose()
         { 
             Layers = null;
@@ -153,8 +112,6 @@ namespace AxisEngine
             // do any custom unloading
             Unload();
         }
-
-        protected abstract void Unload();
 
         public void AddLayer(Layer layer)
         {
@@ -174,10 +131,8 @@ namespace AxisEngine
         public virtual void Draw(GameTime t)
         {
             if (Visible)
-            {
                 foreach (DrawManager drawer in DrawManagers.Values)
                     drawer.Draw(t);
-            }
         }
 
         public void RemoveAllLayersWhere(Predicate<Layer> match)
@@ -203,7 +158,8 @@ namespace AxisEngine
                 Layers.RemoveAt(index);
                 OnLayerRemoved(layer);
             }
-            else throw new IndexOutOfRangeException();
+            else
+                throw new IndexOutOfRangeException();
         }
 
         public void RemoveLayersInRange(int index, int count)
@@ -236,7 +192,7 @@ namespace AxisEngine
 
         private void OnLayerAdded(Layer layer)
         {
-            if (LayerAdded != null) LayerAdded(this, new LayerEventArgs() { Layer = layer });
+            if (LayerAdded != null) LayerAdded(this, new LayerEventArgs(layer));
 
             // hook up events
             layer.UpdateOrderChanged += layer_UpdateOrderChanged;
@@ -247,7 +203,7 @@ namespace AxisEngine
 
         private void OnLayerRemoved(Layer layer)
         {
-            if (LayerRemoved != null) LayerRemoved(this, new LayerEventArgs() { Layer = layer });
+            if (LayerRemoved != null) LayerRemoved(this, new LayerEventArgs(layer));
 
             try
             {
@@ -255,7 +211,5 @@ namespace AxisEngine
             }
             catch (Exception) { }
         }
-
-        #endregion Methods
     }
 }
