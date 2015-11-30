@@ -49,7 +49,7 @@ namespace AxisEngine
             }
         }
 
-        public abstract void UpdateThis(GameTime t);
+        protected abstract void UpdateThis(GameTime t);
 
         public void Add(WorldObject worldObject)
         {
