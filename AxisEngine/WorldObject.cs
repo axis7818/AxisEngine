@@ -239,7 +239,7 @@ namespace AxisEngine
                 ComponentRemoved(this, new WorldObjectEventArgs() { WorldObject = component });
         }
 
-        protected void OnOwnerChanged(WorldObject owner)
+        protected virtual void OnOwnerChanged(WorldObject owner)
         {
             if (OwnerChanged != null)
                 OwnerChanged(this, new WorldObjectEventArgs() { WorldObject = owner });
