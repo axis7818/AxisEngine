@@ -2,11 +2,11 @@
 {
     public class WorldChangingEventArgs
     {
-        public World NewWorld;
-        public World OldWorld;
+        public string NewWorld;
+        public string OldWorld;
         public bool Cancel;
 
-        public WorldChangingEventArgs(World oldWolrd, World newWorld)
+        public WorldChangingEventArgs(string oldWolrd, string newWorld)
         {
             OldWorld = oldWolrd;
             NewWorld = newWorld;

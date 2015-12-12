@@ -11,23 +11,29 @@ namespace AxisEngine
     public abstract class World : IUpdateable, IDrawable
     {
         public Color BackgroundColor = Color.CornflowerBlue;
+
         protected Dictionary<string, CollisionManager> CollisionManagers;
         protected Dictionary<string, DrawManager> DrawManagers;
         protected Dictionary<string, TimeManager> TimeManagers;
         protected GraphicsDeviceManager Graphics;
         protected GraphicsDevice GraphicsDevice;
         protected List<Layer> Layers;
+
+        private string _name;
         private int _drawOrder;
         private bool _enabled;
         private int _updateOrder;
         private bool _visible;
+        private bool _end = false;
+        private string _nextWorld = null;
         
-        public World(GraphicsDeviceManager graphics, GraphicsDevice graphicsDevice)
+        public World(string name, GraphicsDeviceManager graphics, GraphicsDevice graphicsDevice)
         {
             Graphics = graphics;
             GraphicsDevice = graphicsDevice;
             UpdateOrder = 0;
             DrawOrder = 0;
+            _name = name;
         }
         
         public event EventHandler<EventArgs> DrawOrderChanged;
@@ -36,7 +42,13 @@ namespace AxisEngine
         public event EventHandler<LayerEventArgs> LayerRemoved;
         public event EventHandler<EventArgs> UpdateOrderChanged;
         public event EventHandler<EventArgs> VisibleChanged;
+        public event EventHandler<WorldChangingEventArgs> EndWorld;
         
+        public string Name
+        {
+            get { return _name; }
+        }
+
         public int DrawOrder
         {
             get { return _drawOrder; }
@@ -93,6 +105,10 @@ namespace AxisEngine
             Enabled = true;
             Visible = true;
 
+            // we dont want to end if we are initializing
+            _end = false;
+            _nextWorld = null;
+
             // do any custom loading
             SetUpManagers(GraphicsDevice);
             Load();
@@ -100,6 +116,7 @@ namespace AxisEngine
 
         public void Dispose()
         { 
+            // remove managers and layers
             Layers = null;
             CollisionManagers = null;
             DrawManagers = null;
@@ -183,6 +200,11 @@ namespace AxisEngine
                 foreach (CollisionManager collisionManager in CollisionManagers.Values)
                     collisionManager.Update(t);
             }
+
+            if (_end && EndWorld != null)
+            {
+                EndWorld(this, new WorldChangingEventArgs(Name, _nextWorld));
+            }
         }
 
         private void layer_UpdateOrderChanged(object sender, EventArgs e)
@@ -210,6 +232,12 @@ namespace AxisEngine
                 layer.UpdateOrderChanged -= layer_UpdateOrderChanged;
             }
             catch (Exception) { }
+        }
+
+        protected void End(string nextWorld)
+        {
+            _end = true;
+            _nextWorld = nextWorld;
         }
     }
 }

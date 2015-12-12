@@ -5,15 +5,16 @@ namespace AxisEngine
 {
     public class WorldManager
     {
-        private const string DEFAULT = "Default";
+        private string _defaultWorld;
         private string _currentWorld;
         private Dictionary<string, World> _worlds;
 
         public WorldManager(World defaultWorld)
         {
             _worlds = new Dictionary<string, World>();
-            _currentWorld = DEFAULT;
-            _worlds[DEFAULT] = defaultWorld;
+            _defaultWorld = defaultWorld.Name;           
+            _currentWorld = _defaultWorld;
+            AddWorld(defaultWorld);
             CurrentWorld.Initialize();
         }
 
@@ -24,27 +25,28 @@ namespace AxisEngine
             get { return _worlds[_currentWorld]; }
         }
 
-        public void AddWorld(string name, World world)
+        public void AddWorld(World world)
         {
-            _worlds[name] = world;
+            _worlds[world.Name] = world;
+            world.EndWorld += WorldEndedHandler;
         }
 
-        public void SetCurrentWorld(string world)
+        private void WorldEndedHandler(object sender, WorldChangingEventArgs args)
         {
-            // check for valid world
-            if (!_worlds.ContainsKey(world))
-                throw new ArgumentException("World Manager does not have the world: " + world);
+            if (!_worlds.ContainsKey(args.NewWorld))
+                throw new InvalidOperationException("could not find world: " + args.NewWorld);
 
-            // fire the world changing event
-            WorldChangingEventArgs args = new WorldChangingEventArgs(CurrentWorld, _worlds[world]);
             if (CurrentWorldChanging != null)
                 CurrentWorldChanging(this, args);
 
-            // check if the change was cancelled
             if (args.Cancel)
                 return;
 
-            // change the world
+            SetCurrentWorld(args.NewWorld);
+        }
+
+        private void SetCurrentWorld(string world)
+        {
             CurrentWorld.Dispose();
             _currentWorld = world;
             CurrentWorld.Initialize();
