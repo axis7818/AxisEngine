@@ -155,11 +155,8 @@ namespace AxisEngine
 
         private void SubscribeToManagers(WorldObject worldObject)
         {
-            // subscribe this object
-            if (worldObject is ICollisionManageable)
-                CollisionManager.AddCollisionManageable(worldObject as ICollisionManageable);
-            else if (worldObject is Trigger)
-                CollisionManager.AddTrigger(worldObject as Trigger);
+            if (worldObject is ICollidable)
+                CollisionManager.AddCollidable(worldObject as ICollidable);
             else if (worldObject is IDrawManageable)
                 DrawManager.AddDrawable(worldObject as IDrawManageable);
 
@@ -172,25 +169,10 @@ namespace AxisEngine
 
         private void UnsubscribeFromManagers(WorldObject worldObject)
         {
-            // unsubscribe this object
-            if (worldObject is ICollisionManageable)
-            {
-                ICollisionManageable coll = worldObject as ICollisionManageable;
-                if (CollisionManager.Contains(coll))
-                    CollisionManager.Remove(coll);
-            }
-            else if (worldObject is Trigger)
-            {
-                Trigger trig = worldObject as Trigger;
-                if (CollisionManager.Contains(trig))
-                    CollisionManager.Remove(trig);
-            }
+            if (worldObject is ICollidable)
+                CollisionManager.AddCollidable(worldObject as ICollidable);
             else if (worldObject is IDrawManageable)
-            {
-                IDrawManageable draw = worldObject as IDrawManageable;
-                if (DrawManager.Contains(draw))
-                    DrawManager.Remove(draw);
-            }
+                DrawManager.Remove(worldObject as IDrawManageable);
 
             // unsubscribe the components recursively
             foreach (WorldObject wo in worldObject.GetComponents())

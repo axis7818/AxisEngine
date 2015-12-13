@@ -1,6 +1,8 @@
-﻿namespace AxisEngine
+﻿using System;
+
+namespace AxisEngine
 {
-    public class WorldChangingEventArgs
+    public class WorldChangingEventArgs : EventArgs
     {
         public string NewWorld;
         public string OldWorld;

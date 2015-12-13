@@ -7,33 +7,21 @@ namespace AxisEngine.Physics
 {
     public class CollisionManager : IUpdateable, IEnumerable
     {
-        private bool _enabled;
+        private List<BoxCollider> _boxColliders = new List<BoxCollider>();
+        private List<CircleCollider> _circleColliders = new List<CircleCollider>();
+        private List<Trigger> _triggers = new List<Trigger>();
 
-        private int _updateOrder;
-
-        private List<ICollisionManageable> ToManage;
-
-        private List<Trigger> Triggers;
-
-        public CollisionManager()
-        {
-            Enabled = true;
-            UpdateOrder = 0;
-
-            ToManage = new List<ICollisionManageable>();
-            Triggers = new List<Trigger>();
-        }
-
+        private bool _enabled = true;
+        private int _updateOrder = 0;
+        
+        public CollisionManager() { }
+        
         public event EventHandler<EventArgs> EnabledChanged;
-
         public event EventHandler<EventArgs> UpdateOrderChanged;
 
         public bool Enabled
         {
-            get
-            {
-                return _enabled;
-            }
+            get { return _enabled; }
             set
             {
                 _enabled = value;
@@ -41,24 +29,19 @@ namespace AxisEngine.Physics
             }
         }
 
-        public int Size
+        public int Count
         {
-            get
-            {
-                return ToManage.Count;
-            }
+            get { return _circleColliders.Count + _boxColliders.Count + _triggers.Count; }
         }
 
         public int UpdateOrder
         {
-            get
-            {
-                return _updateOrder;
-            }
+            get { return _updateOrder; }
             set
             {
                 _updateOrder = value;
-                if (UpdateOrderChanged != null) UpdateOrderChanged(this, new EventArgs());
+                if (UpdateOrderChanged != null)
+                    UpdateOrderChanged(this, new EventArgs());
             }
         }
 
@@ -116,65 +99,82 @@ namespace AxisEngine.Physics
             // if all else fails, return false
             return false;
         }
-
-        public void AddCollisionManageable(ICollisionManageable collisionManageable)
+        
+        public void AddCollidable(ICollidable coll)
         {
-            if (!ToManage.Contains(collisionManageable))
-                ToManage.Add(collisionManageable);
-            else
-                throw new ArgumentException("collisionManageable already exists in the manager.");
+            switch (coll.Type)
+            {
+                case ColliderType.BOX_COLLIDER:
+                    BoxCollider box = coll as BoxCollider;
+                    if (_boxColliders.Contains(box))
+                        throw new ArgumentException("The BoxCollider is already in this CollisionManager.");
+                    _boxColliders.Add(box);
+                    return;
+                case ColliderType.CIRCLE_COLLIDER:
+                    CircleCollider cir = coll as CircleCollider;
+                    if (_circleColliders.Contains(cir))
+                        throw new ArgumentException("The CircleCollider is already in this CollisionManager.");
+                    _circleColliders.Add(cir);
+                    return;
+                case ColliderType.TRIGGER:
+                    Trigger trig = coll as Trigger;
+                    if (_triggers.Contains(trig))
+                        throw new ArgumentException("The Trigger is already in this CollisionManager.");
+                    _triggers.Add(trig);
+                    return;
+                default:
+                    throw new InvalidOperationException("Invalid Collider type.");
+            }
         }
 
-        public void AddTrigger(Trigger trigger)
+        public bool Contains(ICollidable coll)
         {
-            if (!Triggers.Contains(trigger))
-                Triggers.Add(trigger);
-            else
-                throw new ArgumentException("trigger already exists in the manager.");
-        }
-
-        public bool Contains(ICollisionManageable coll)
-        {
-            return ToManage.Contains(coll);
-        }
-
-        public bool Contains(Trigger trigger)
-        {
-            return Triggers.Contains(trigger);
+            switch (coll.Type)
+            {
+                case ColliderType.BOX_COLLIDER:
+                    return _boxColliders.Contains(coll as BoxCollider);
+                case ColliderType.CIRCLE_COLLIDER:
+                    return _circleColliders.Contains(coll as CircleCollider);
+                case ColliderType.TRIGGER:
+                    return _triggers.Contains(coll as Trigger);
+                default:
+                    throw new InvalidOperationException("Invalid Collider Type.");
+            }
         }
 
         public IEnumerator GetEnumerator()
         {
-            foreach (ICollisionManageable coll in ToManage)
-            {
-                yield return coll;
-            }
-        }
-
-        public IEnumerator GetEnumeratedTriggers()
-        {
-            foreach (Trigger trig in Triggers)
-            {
+            foreach (BoxCollider box in _boxColliders)
+                yield return box;
+            foreach (CircleCollider cir in _circleColliders)
+                yield return cir;
+            foreach (Trigger trig in _triggers)
                 yield return trig;
+        }
+
+        public void Remove(ICollidable coll)
+        {
+            switch (coll.Type)
+            {
+                case ColliderType.BOX_COLLIDER:
+                    _boxColliders.Remove(coll as BoxCollider);
+                    return;
+                case ColliderType.CIRCLE_COLLIDER:
+                    _circleColliders.Remove(coll as CircleCollider);
+                    return;
+                case ColliderType.TRIGGER:
+                    _triggers.Remove(coll as Trigger);
+                    return;
+                default:
+                    throw new InvalidOperationException("Invalid ColliderType");
             }
-        }
-
-        public void Remove(ICollisionManageable coll)
-        {
-            ToManage.Remove(coll);
-        }
-
-        public void Remove(Trigger trigger)
-        {
-            Triggers.Remove(trigger);
         }
 
         public void Update(GameTime t)
         {
             if (Enabled)
             {
-                /* TODO: On Updating, make sure to undo any force on a Body that might push objects into eachother. */
-                /* TODO: On Updating, make sure to check for overlaps with triggers. */
+
             }
         }
     }

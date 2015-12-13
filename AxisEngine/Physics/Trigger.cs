@@ -5,7 +5,7 @@ using System;
 
 namespace AxisEngine.Physics
 {
-    public class Trigger : WorldObject
+    public class Trigger : WorldObject, ICollidable
     {
         private bool _simple;
         private List<Circle> Circles;
@@ -28,6 +28,11 @@ namespace AxisEngine.Physics
         public bool IsSimple
         {
             get { return _simple; }
+        }
+
+        public ColliderType Type
+        {
+            get { return ColliderType.TRIGGER; }
         }
 
         public void Center()
@@ -107,6 +112,21 @@ namespace AxisEngine.Physics
         protected override void UpdateThis(GameTime t)
         {
             
+        }
+
+        public bool Intersects(ICollidable coll)
+        {
+            switch (coll.Type)
+            {
+                case ColliderType.BOX_COLLIDER:
+                    return (coll as BoxCollider).Intersects(this);
+                case ColliderType.CIRCLE_COLLIDER:
+                    return (coll as CircleCollider).Intersects(this);
+                case ColliderType.TRIGGER:
+                    return Intersects(coll as Trigger);
+                default:
+                    throw new InvalidCastException("invalid collider type.");
+            }
         }
     }
 }
