@@ -10,6 +10,5 @@ namespace AxisEngine.Physics
     {
         BOX_COLLIDER, 
         CIRCLE_COLLIDER,
-        TRIGGER
     }
 }

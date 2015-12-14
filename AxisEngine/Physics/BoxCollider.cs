@@ -27,6 +27,9 @@ namespace AxisEngine.Physics
             get { return ColliderType.BOX_COLLIDER; }
         }
 
+        public event EventHandler<CollisionEventArgs> CollisionStart;
+        public event EventHandler<CollisionEventArgs> CollisionEnd;
+
         public void Center()
         {
             Position = new Vector2(BasePosition.X - Dimensions.X * 0.5f, BasePosition.Y - Dimensions.Y * 0.5f);
@@ -40,16 +43,9 @@ namespace AxisEngine.Physics
                     return CollisionManager.Collides(Bounds, (coll as BoxCollider).Bounds);
                 case ColliderType.CIRCLE_COLLIDER:
                     return CollisionManager.Collides(Bounds, (coll as CircleCollider).Bounds);
-                case ColliderType.TRIGGER:
-                    return Intersects(coll as Trigger);
                 default:
                     throw new InvalidOperationException("Incompatable Collider Type.");
             }
-        }
-
-        public bool Intersects(Trigger trigger)
-        {
-            return trigger.Intersects(Bounds);
         }
 
         protected override void UpdateThis(GameTime t)

@@ -9,7 +9,6 @@ namespace AxisEngine.Physics
     {
         private List<BoxCollider> _boxColliders = new List<BoxCollider>();
         private List<CircleCollider> _circleColliders = new List<CircleCollider>();
-        private List<Trigger> _triggers = new List<Trigger>();
 
         private bool _enabled = true;
         private int _updateOrder = 0;
@@ -31,7 +30,7 @@ namespace AxisEngine.Physics
 
         public int Count
         {
-            get { return _circleColliders.Count + _boxColliders.Count + _triggers.Count; }
+            get { return _circleColliders.Count + _boxColliders.Count; }
         }
 
         public int UpdateOrder
@@ -116,12 +115,6 @@ namespace AxisEngine.Physics
                         throw new ArgumentException("The CircleCollider is already in this CollisionManager.");
                     _circleColliders.Add(cir);
                     return;
-                case ColliderType.TRIGGER:
-                    Trigger trig = coll as Trigger;
-                    if (_triggers.Contains(trig))
-                        throw new ArgumentException("The Trigger is already in this CollisionManager.");
-                    _triggers.Add(trig);
-                    return;
                 default:
                     throw new InvalidOperationException("Invalid Collider type.");
             }
@@ -135,8 +128,6 @@ namespace AxisEngine.Physics
                     return _boxColliders.Contains(coll as BoxCollider);
                 case ColliderType.CIRCLE_COLLIDER:
                     return _circleColliders.Contains(coll as CircleCollider);
-                case ColliderType.TRIGGER:
-                    return _triggers.Contains(coll as Trigger);
                 default:
                     throw new InvalidOperationException("Invalid Collider Type.");
             }
@@ -148,8 +139,6 @@ namespace AxisEngine.Physics
                 yield return box;
             foreach (CircleCollider cir in _circleColliders)
                 yield return cir;
-            foreach (Trigger trig in _triggers)
-                yield return trig;
         }
 
         public void Remove(ICollidable coll)
@@ -161,9 +150,6 @@ namespace AxisEngine.Physics
                     return;
                 case ColliderType.CIRCLE_COLLIDER:
                     _circleColliders.Remove(coll as CircleCollider);
-                    return;
-                case ColliderType.TRIGGER:
-                    _triggers.Remove(coll as Trigger);
                     return;
                 default:
                     throw new InvalidOperationException("Invalid ColliderType");

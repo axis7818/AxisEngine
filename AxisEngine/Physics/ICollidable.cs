@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AxisEngine.Physics
 {
@@ -11,5 +7,8 @@ namespace AxisEngine.Physics
         ColliderType Type { get; }
 
         bool Intersects(ICollidable coll);
+
+        event EventHandler<CollisionEventArgs> CollisionStart;
+        event EventHandler<CollisionEventArgs> CollisionEnd;
     }
 }

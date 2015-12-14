@@ -27,6 +27,9 @@ namespace AxisEngine.Physics
             get { return ColliderType.CIRCLE_COLLIDER; }
         }
 
+        public event EventHandler<CollisionEventArgs> CollisionStart;
+        public event EventHandler<CollisionEventArgs> CollisionEnd;
+
         public bool Intersects(ICollidable coll)
         {
             switch (coll.Type)
@@ -35,16 +38,9 @@ namespace AxisEngine.Physics
                     return CollisionManager.Collides((coll as BoxCollider).Bounds, Bounds);
                 case ColliderType.CIRCLE_COLLIDER:
                     return CollisionManager.Collides(Bounds, (coll as CircleCollider).Bounds);
-                case ColliderType.TRIGGER:
-                    return Intersects(coll as Trigger);
                 default:
                     throw new InvalidOperationException("invalid collider type.");
             }
-        }
-
-        public bool Intersects(Trigger trigger)
-        {
-            return trigger.Intersects(Bounds);
         }
 
         protected override void UpdateThis(GameTime t)
