@@ -2,13 +2,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using AxisEngine;
 
 namespace AxisEngine.Physics
 {
     public class CollisionManager : IUpdateable, IEnumerable
     {
-        private List<BoxCollider> _boxColliders = new List<BoxCollider>();
-        private List<CircleCollider> _circleColliders = new List<CircleCollider>();
+        private List<ICollidable> colliders = new List<ICollidable>();
+        private DoubleKeyMap<ICollidable, bool> collisionMap = new DoubleKeyMap<ICollidable, bool>();
 
         private bool _enabled = true;
         private int _updateOrder = 0;
@@ -30,7 +31,7 @@ namespace AxisEngine.Physics
 
         public int Count
         {
-            get { return _circleColliders.Count + _boxColliders.Count; }
+            get { return colliders.Count; }
         }
 
         public int UpdateOrder
@@ -43,7 +44,84 @@ namespace AxisEngine.Physics
                     UpdateOrderChanged(this, new EventArgs());
             }
         }
+        
+        public void AddCollidable(ICollidable coll)
+        {
+            if (colliders.Contains(coll))
+                throw new ArgumentException("The Collider is already in this collision manager.");
 
+            // put an entry in the collision map
+            foreach(ICollidable other in colliders)
+            {
+                collisionMap.Set(coll, other, false);
+            }
+
+            // add this entry to the list of colliders
+            colliders.Add(coll);
+        }
+
+        public bool Contains(ICollidable coll)
+        {
+            return colliders.Contains(coll);
+        }
+
+        public IEnumerator GetEnumerator()
+        {
+            foreach (ICollidable coll in colliders)
+                yield return coll;
+        }
+
+        public void Remove(ICollidable coll)
+        {
+            if (colliders.Contains(coll))
+            {
+                collisionMap.RemoveKey(coll);
+                colliders.Remove(coll);
+            }
+        }
+
+        //TODO: this needs to be tested
+        public void Update(GameTime t)
+        {
+            if (Enabled)
+            {
+                foreach(Tuple<ICollidable, ICollidable> key in collisionMap.Keys)
+                {
+                    // unpack the colliders
+                    ICollidable A = key.Item1;
+                    ICollidable B = key.Item2;
+
+                    // handle their collision status
+                    if (collisionMap.Get(key))
+                    {
+                        // handle colliders that are collided
+                        if (!A.Intersects(B))
+                        {
+                            // no longer intersecting
+                            collisionMap.Set(key, false);
+                            CollisionEventArgs args = new CollisionEventArgs(A, B);
+                            A.RevokeCollision(args);
+                            B.RevokeCollision(args);
+                        }
+
+                    }
+                    else
+                    {
+                        // handle colliders that are not collided
+                        if (A.Intersects(B))
+                        {
+                            // they are now colliding
+                            collisionMap.Set(key, true);
+                            CollisionEventArgs args = new CollisionEventArgs(A, B);
+                            A.InvokeCollision(args);
+                            B.InvokeCollision(args);
+                        }
+                    }
+                }
+            }
+        }
+
+        #region STATIC_METHODS
         public static bool Collides(Rectangle r1, Rectangle r2)
         {
             return r1.Intersects(r2);
@@ -98,70 +176,6 @@ namespace AxisEngine.Physics
             // if all else fails, return false
             return false;
         }
-        
-        public void AddCollidable(ICollidable coll)
-        {
-            switch (coll.Type)
-            {
-                case ColliderType.BOX_COLLIDER:
-                    BoxCollider box = coll as BoxCollider;
-                    if (_boxColliders.Contains(box))
-                        throw new ArgumentException("The BoxCollider is already in this CollisionManager.");
-                    _boxColliders.Add(box);
-                    return;
-                case ColliderType.CIRCLE_COLLIDER:
-                    CircleCollider cir = coll as CircleCollider;
-                    if (_circleColliders.Contains(cir))
-                        throw new ArgumentException("The CircleCollider is already in this CollisionManager.");
-                    _circleColliders.Add(cir);
-                    return;
-                default:
-                    throw new InvalidOperationException("Invalid Collider type.");
-            }
-        }
-
-        public bool Contains(ICollidable coll)
-        {
-            switch (coll.Type)
-            {
-                case ColliderType.BOX_COLLIDER:
-                    return _boxColliders.Contains(coll as BoxCollider);
-                case ColliderType.CIRCLE_COLLIDER:
-                    return _circleColliders.Contains(coll as CircleCollider);
-                default:
-                    throw new InvalidOperationException("Invalid Collider Type.");
-            }
-        }
-
-        public IEnumerator GetEnumerator()
-        {
-            foreach (BoxCollider box in _boxColliders)
-                yield return box;
-            foreach (CircleCollider cir in _circleColliders)
-                yield return cir;
-        }
-
-        public void Remove(ICollidable coll)
-        {
-            switch (coll.Type)
-            {
-                case ColliderType.BOX_COLLIDER:
-                    _boxColliders.Remove(coll as BoxCollider);
-                    return;
-                case ColliderType.CIRCLE_COLLIDER:
-                    _circleColliders.Remove(coll as CircleCollider);
-                    return;
-                default:
-                    throw new InvalidOperationException("Invalid ColliderType");
-            }
-        }
-
-        public void Update(GameTime t)
-        {
-            if (Enabled)
-            {
-
-            }
-        }
+        #endregion STATIC_METHODS
     }
 }

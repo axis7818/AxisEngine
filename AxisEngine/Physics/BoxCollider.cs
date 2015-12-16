@@ -52,5 +52,17 @@ namespace AxisEngine.Physics
         {
             
         }
+
+        public void InvokeCollision(CollisionEventArgs args)
+        {
+            if (CollisionStart != null)
+                CollisionStart(this, args);    
+        }
+
+        public void RevokeCollision(CollisionEventArgs args)
+        {
+            if (CollisionEnd != null)
+                CollisionEnd(this, args);
+        }
     }
 }

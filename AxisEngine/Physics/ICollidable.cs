@@ -6,9 +6,11 @@ namespace AxisEngine.Physics
     {
         ColliderType Type { get; }
 
-        bool Intersects(ICollidable coll);
-
         event EventHandler<CollisionEventArgs> CollisionStart;
         event EventHandler<CollisionEventArgs> CollisionEnd;
+
+        bool Intersects(ICollidable coll);
+        void InvokeCollision(CollisionEventArgs args);
+        void RevokeCollision(CollisionEventArgs args);
     }
 }
