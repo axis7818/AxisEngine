@@ -1,8 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using AxisEngine;
+using AxisEngine.AxisDebug;
 
 namespace AxisEngine.Physics
 {
@@ -99,7 +101,7 @@ namespace AxisEngine.Physics
                         {
                             // no longer intersecting
                             collisionMap.Set(key, false);
-                            CollisionEventArgs args = new CollisionEventArgs(A, B);
+                            CollisionEventArgs args = new CollisionEventArgs(A, B, false);
                             A.RevokeCollision(args);
                             B.RevokeCollision(args);
                         }
@@ -112,7 +114,7 @@ namespace AxisEngine.Physics
                         {
                             // they are now colliding
                             collisionMap.Set(key, true);
-                            CollisionEventArgs args = new CollisionEventArgs(A, B);
+                            CollisionEventArgs args = new CollisionEventArgs(A, B, true);
                             A.InvokeCollision(args);
                             B.InvokeCollision(args);
                         }

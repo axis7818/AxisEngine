@@ -49,6 +49,16 @@ namespace AxisEngine.Visuals
 
         public event EventHandler<AnimationEventArgs> AnimationFinished;
 
+        public int Width
+        {
+            get { return _cellWidth; }
+        }
+
+        public int Height
+        {
+            get { return _cellHeight; }
+        }
+
         public bool FinishBeforeTransition
         {
             get { return _finishBeforeTransition; }

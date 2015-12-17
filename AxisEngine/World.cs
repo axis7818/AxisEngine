@@ -26,6 +26,7 @@ namespace AxisEngine
         private bool _visible;
         private bool _end = false;
         private string _nextWorld = null;
+        private bool _drawWireFrames = false;
         
         public World(string name, GraphicsDeviceManager graphics, GraphicsDevice graphicsDevice)
         {
@@ -43,10 +44,16 @@ namespace AxisEngine
         public event EventHandler<EventArgs> UpdateOrderChanged;
         public event EventHandler<EventArgs> VisibleChanged;
         public event EventHandler<WorldChangingEventArgs> EndWorld;
-        
+
         public string Name
         {
             get { return _name; }
+        }
+
+        public bool DrawWireFrames
+        {
+            get { return _drawWireFrames; }
+            set { _drawWireFrames = value; }
         }
 
         public int DrawOrder
@@ -148,8 +155,14 @@ namespace AxisEngine
         public virtual void Draw(GameTime t)
         {
             if (Visible)
+            {
                 foreach (DrawManager drawer in DrawManagers.Values)
                     drawer.Draw(t);
+
+                if (_drawWireFrames)
+                    foreach (Layer layer in Layers)
+                        layer.DrawWireFrames();
+            }
         }
 
         public void RemoveAllLayersWhere(Predicate<Layer> match)

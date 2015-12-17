@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using AxisEngine.Physics;
+using AxisEngine.AxisDebug;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections;
@@ -27,7 +29,6 @@ namespace AxisEngine.Visuals
         }
 
         public event EventHandler<EventArgs> DrawOrderChanged;
-
         public event EventHandler<EventArgs> VisibleChanged;
 
         public int DrawOrder
@@ -95,6 +96,23 @@ namespace AxisEngine.Visuals
 
                 _spriteBatch.End();
             }
+        }
+
+        public void DrawWireFrames(CollisionManager collisionManager)
+        {
+            _spriteBatch.Begin();
+            foreach(ICollidable coll in collisionManager)
+            {
+                if(coll.Type == ColliderType.BOX_COLLIDER)
+                {
+                    _spriteBatch.Draw(WireFrames.BoxWireFrame((coll as BoxCollider).Bounds, GraphicsDevice), coll.Position, Color.White);
+                }
+                else
+                {
+                    
+                }
+            }
+            _spriteBatch.End();
         }
 
         public void Remove(IDrawManageable toRemove)

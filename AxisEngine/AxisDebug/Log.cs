@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 
-namespace AxisEngine.Debug
+namespace AxisEngine.AxisDebug
 {
     public static class Log
     {

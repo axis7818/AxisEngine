@@ -185,5 +185,10 @@ namespace AxisEngine
         {
             SortUpdateOrder();
         }
+
+        public void DrawWireFrames()
+        {
+            DrawManager.DrawWireFrames(CollisionManager);
+        }
     }
 }

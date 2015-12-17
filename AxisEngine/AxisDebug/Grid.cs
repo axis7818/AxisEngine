@@ -2,33 +2,24 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 
-namespace AxisEngine.Debug
+namespace AxisEngine.AxisDebug
 {
     public static class Grid
     {
         public static int GridSpacing = 10;
-
         public static int MajorGridSpacing = 5;
-
         public static Color MajorGridColor = Color.LimeGreen;
-
         public static Color MinorGridColor = Color.LightSeaGreen;
-
         private static bool _visible = false;
 
         public static bool Visible
         {
-            get
-            {
-                return _visible;
-            }
+            get { return _visible; }
             set
             {
                 _visible = value;
                 if (VisibleChanged != null)
-                {
                     VisibleChanged(null, new EventArgs());
-                }
             }
         }
 

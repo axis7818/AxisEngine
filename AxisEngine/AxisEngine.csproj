@@ -51,6 +51,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AxisDebug\WireFrames.cs" />
     <Compile Include="AxisExtensions.cs" />
     <Compile Include="AxisMath.cs" />
     <Compile Include="Circle.cs" />

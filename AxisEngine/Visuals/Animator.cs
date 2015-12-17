@@ -77,6 +77,16 @@ namespace AxisEngine.Visuals
             get { return _animations[_currentAnimation]; }
         }
 
+        public int Width
+        {
+            get { return CurrentAnimation.Width; }
+        }
+
+        public int Height
+        {
+            get { return CurrentAnimation.Height; }
+        }
+
         protected override void UpdateThis(GameTime t)
         {
             CurrentAnimation.Update(t);

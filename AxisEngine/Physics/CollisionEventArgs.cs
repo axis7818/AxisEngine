@@ -8,11 +8,15 @@ namespace AxisEngine.Physics
 {
     public class CollisionEventArgs : EventArgs
     {
-        Tuple<ICollidable, ICollidable> Involved;
+        public ICollidable A;
+        public ICollidable B;
+        public bool IsColliding;
 
-        public CollisionEventArgs(ICollidable A, ICollidable B)
+        public CollisionEventArgs(ICollidable A, ICollidable B, bool isColliding)
         {
-            Involved = new Tuple<ICollidable, ICollidable>(A, B);
+            this.A = A;
+            this.B = B;
+            IsColliding = isColliding;
         }
     }
 }
