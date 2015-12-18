@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace AxisEngine.Physics
 {
@@ -7,6 +8,7 @@ namespace AxisEngine.Physics
     {
         ColliderType Type { get; }
         Vector2 Position { get; }
+        Texture2D WireFrame { get; set; }
 
         event EventHandler<CollisionEventArgs> CollisionStart;
         event EventHandler<CollisionEventArgs> CollisionEnd;

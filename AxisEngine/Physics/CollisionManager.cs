@@ -92,7 +92,7 @@ namespace AxisEngine.Physics
                     // unpack the colliders
                     ICollidable A = key.Item1;
                     ICollidable B = key.Item2;
-
+                    
                     // handle their collision status
                     if (collisionMap.Get(key))
                     {
@@ -105,7 +105,6 @@ namespace AxisEngine.Physics
                             A.RevokeCollision(args);
                             B.RevokeCollision(args);
                         }
-
                     }
                     else
                     {
@@ -119,6 +118,21 @@ namespace AxisEngine.Physics
                             B.InvokeCollision(args);
                         }
                     }
+                }
+            }
+        }
+
+        public void SetWireFrames(GraphicsDevice graphicsDevice)
+        {
+            foreach(ICollidable coll in colliders)
+            {
+                if (coll.Type == ColliderType.BOX_COLLIDER)
+                {
+                    coll.WireFrame = WireFrames.BoxWireFrame((coll as BoxCollider).Bounds, graphicsDevice);
+                }
+                else
+                {
+                    coll.WireFrame = WireFrames.CircleWireFrame((coll as CircleCollider).Bounds, graphicsDevice);
                 }
             }
         }

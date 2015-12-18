@@ -103,14 +103,8 @@ namespace AxisEngine.Visuals
             _spriteBatch.Begin();
             foreach(ICollidable coll in collisionManager)
             {
-                if(coll.Type == ColliderType.BOX_COLLIDER)
-                {
-                    _spriteBatch.Draw(WireFrames.BoxWireFrame((coll as BoxCollider).Bounds, GraphicsDevice), coll.Position, Color.White);
-                }
-                else
-                {
-                    
-                }
+                if(coll.WireFrame != null)
+                    _spriteBatch.Draw(coll.WireFrame, coll.Position, Color.White);
             }
             _spriteBatch.End();
         }

@@ -1,15 +1,23 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace AxisEngine.Physics
 {
     public class BoxCollider : WorldObject, ICollidable
     {
         private Point Dimensions;
+        private Texture2D _wireFrame = null;
 
         public BoxCollider(Point dimensions)
         {
             Dimensions = dimensions;
+        }
+
+        public Texture2D WireFrame
+        {
+            get { return _wireFrame; }
+            set { _wireFrame = value; }
         }
 
         public Rectangle Bounds

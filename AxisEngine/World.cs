@@ -26,7 +26,6 @@ namespace AxisEngine
         private bool _visible;
         private bool _end = false;
         private string _nextWorld = null;
-        private bool _drawWireFrames = false;
         
         public World(string name, GraphicsDeviceManager graphics, GraphicsDevice graphicsDevice)
         {
@@ -48,12 +47,6 @@ namespace AxisEngine
         public string Name
         {
             get { return _name; }
-        }
-
-        public bool DrawWireFrames
-        {
-            get { return _drawWireFrames; }
-            set { _drawWireFrames = value; }
         }
 
         public int DrawOrder
@@ -152,16 +145,25 @@ namespace AxisEngine
                 AddLayer(layer);
         }
 
-        public virtual void Draw(GameTime t)
+        public void Draw(GameTime t)
         {
             if (Visible)
             {
                 foreach (DrawManager drawer in DrawManagers.Values)
                     drawer.Draw(t);
+            }
+        }
 
-                if (_drawWireFrames)
-                    foreach (Layer layer in Layers)
-                        layer.DrawWireFrames();
+        public void DrawWireFrames()
+        {
+            HashSet<CollisionManager> drawn = new HashSet<CollisionManager>();
+            foreach(Layer layer in Layers)
+            {
+                if (!drawn.Contains(layer.CollisionManager))
+                {
+                    layer.DrawWireFrames();
+                    drawn.Add(layer.CollisionManager);
+                }
             }
         }
 
