@@ -25,6 +25,7 @@ namespace AxisEngine
         private int _updateOrder;
         private bool _visible;
         private bool _end = false;
+        private bool _quit = false;
         private string _nextWorld = null;
         
         public World(string name, GraphicsDeviceManager graphics, GraphicsDevice graphicsDevice)
@@ -220,6 +221,10 @@ namespace AxisEngine
             {
                 EndWorld(this, new WorldChangingEventArgs(Name, _nextWorld));
             }
+            if (_quit)
+            {
+                EndWorld(this, WorldChangingEventArgs.QuittingArgs);
+            }
         }
 
         private void layer_UpdateOrderChanged(object sender, EventArgs e)
@@ -253,6 +258,11 @@ namespace AxisEngine
         {
             _end = true;
             _nextWorld = nextWorld;
+        }
+
+        protected void Quit()
+        {
+            _quit = true;
         }
     }
 }

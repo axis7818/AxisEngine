@@ -125,7 +125,7 @@ namespace AxisEngine
 
         private void OnWorldObjectAdded(WorldObject worldObject)
         {
-            if (WorldObjectAdded != null) WorldObjectAdded(this, new WorldObjectEventArgs() { WorldObject = worldObject });
+            if (WorldObjectAdded != null) WorldObjectAdded(this, new WorldObjectEventArgs(worldObject));
 
             // set the layer
             worldObject.Layer = this;
@@ -142,7 +142,7 @@ namespace AxisEngine
 
         private void OnWorldObjectRemoved(WorldObject worldObject)
         {
-            if (WorldObjectRemoved != null) WorldObjectRemoved(this, new WorldObjectEventArgs() { WorldObject = worldObject });
+            if (WorldObjectRemoved != null) WorldObjectRemoved(this, new WorldObjectEventArgs(worldObject));
 
             // remove the worldObject from the Managers
             UnsubscribeFromManagers(worldObject);

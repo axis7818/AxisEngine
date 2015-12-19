@@ -101,9 +101,8 @@ namespace AxisEngine.Physics
                         {
                             // no longer intersecting
                             collisionMap.Set(key, false);
-                            CollisionEventArgs args = new CollisionEventArgs(A, B, false);
-                            A.RevokeCollision(args);
-                            B.RevokeCollision(args);
+                            A.RevokeCollision(new CollisionEventArgs(B, false));
+                            B.RevokeCollision(new CollisionEventArgs(A, false));
                         }
                     }
                     else
@@ -113,9 +112,8 @@ namespace AxisEngine.Physics
                         {
                             // they are now colliding
                             collisionMap.Set(key, true);
-                            CollisionEventArgs args = new CollisionEventArgs(A, B, true);
-                            A.InvokeCollision(args);
-                            B.InvokeCollision(args);
+                            A.InvokeCollision(new CollisionEventArgs(B, true));
+                            B.InvokeCollision(new CollisionEventArgs(A, true));
                         }
                     }
                 }

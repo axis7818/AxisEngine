@@ -19,6 +19,7 @@ namespace AxisEngine
         }
 
         public event EventHandler<WorldChangingEventArgs> CurrentWorldChanging;
+        public event EventHandler<EventArgs> ReadyToQuit;
 
         public World CurrentWorld
         {
@@ -33,6 +34,13 @@ namespace AxisEngine
 
         private void WorldEndedHandler(object sender, WorldChangingEventArgs args)
         {
+            if (args.Quit)
+            {
+                if (ReadyToQuit != null)
+                    ReadyToQuit(this, EventArgs.Empty);
+                return;
+            }
+
             if (!_worlds.ContainsKey(args.NewWorld))
                 throw new InvalidOperationException("could not find world: " + args.NewWorld);
 

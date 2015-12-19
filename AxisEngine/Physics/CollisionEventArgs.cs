@@ -8,14 +8,12 @@ namespace AxisEngine.Physics
 {
     public class CollisionEventArgs : EventArgs
     {
-        public ICollidable A;
-        public ICollidable B;
+        public ICollidable Other;
         public bool IsColliding;
 
-        public CollisionEventArgs(ICollidable A, ICollidable B, bool isColliding)
+        public CollisionEventArgs(ICollidable other, bool isColliding)
         {
-            this.A = A;
-            this.B = B;
+            Other = other;
             IsColliding = isColliding;
         }
     }

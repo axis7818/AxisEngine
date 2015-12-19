@@ -230,19 +230,19 @@ namespace AxisEngine
         private void OnComponentAdded(WorldObject component)
         {
             if (ComponentAdded != null)
-                ComponentAdded(this, new WorldObjectEventArgs() { WorldObject = component });
+                ComponentAdded(this, new WorldObjectEventArgs(component));
         }
 
         private void OnComponentRemoved(WorldObject component)
         {
             if (ComponentRemoved != null)
-                ComponentRemoved(this, new WorldObjectEventArgs() { WorldObject = component });
+                ComponentRemoved(this, new WorldObjectEventArgs(component));
         }
 
         protected virtual void OnOwnerChanged(WorldObject owner)
         {
             if (OwnerChanged != null)
-                OwnerChanged(this, new WorldObjectEventArgs() { WorldObject = owner });
+                OwnerChanged(this, new WorldObjectEventArgs(owner));
 
             Layer = owner == null ? null : owner.Layer;
         }
