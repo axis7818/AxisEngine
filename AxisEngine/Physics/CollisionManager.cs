@@ -1,10 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using AxisEngine;
-using AxisEngine.AxisDebug;
 
 namespace AxisEngine.Physics
 {
@@ -81,8 +78,7 @@ namespace AxisEngine.Physics
                 colliders.Remove(coll);
             }
         }
-
-        //TODO: this needs to be tested
+        
         public void Update(GameTime t)
         {
             if (Enabled)
@@ -120,21 +116,6 @@ namespace AxisEngine.Physics
             }
         }
 
-        public void SetWireFrames(GraphicsDevice graphicsDevice)
-        {
-            foreach(ICollidable coll in colliders)
-            {
-                if (coll.Type == ColliderType.BOX_COLLIDER)
-                {
-                    coll.WireFrame = WireFrames.BoxWireFrame((coll as BoxCollider).Bounds, graphicsDevice);
-                }
-                else
-                {
-                    coll.WireFrame = WireFrames.CircleWireFrame((coll as CircleCollider).Bounds, graphicsDevice);
-                }
-            }
-        }
-
         #region STATIC_METHODS
         public static bool Collides(Rectangle r1, Rectangle r2)
         {
@@ -145,7 +126,7 @@ namespace AxisEngine.Physics
         {
             return c1.Intersects(c2);
         }
-
+        
         public static bool Collides(Rectangle r, Circle c)
         {
             // check if the center of the circle is in the rectangle
@@ -153,7 +134,7 @@ namespace AxisEngine.Physics
                 return true;
 
             // check if the circle's "outer box" doesn't intersect the rectangle
-            Rectangle outerBounds = new Rectangle(new Point(c.Left, c.Top), new Point(c.Size * 2));
+            Rectangle outerBounds = new Rectangle(new Point(c.Left, c.Top), new Point(c.Radius * 2));
             if (!r.Intersects(outerBounds))
                 return false;
 
@@ -171,21 +152,29 @@ namespace AxisEngine.Physics
             if (c.Contains(corner))
                 return true;
 
-            // check if the top edge intersects the circle
-            if (Math.Abs(c.Center.Y - r.Top) <= 0)
-                return true;
+            // check for a top/bottom rectangle edge collision
+            if(AxisMath.Between(c.Center.X, r.Left, r.Right))
+            {
+                // check top edge
+                if (c.Bottom >= r.Top)
+                    return true;
 
-            // check if the right edge intersects the circle
-            if (Math.Abs(c.Center.X - r.Right) <= 0)
-                return true;
+                // check bottom edge
+                if (c.Top <= r.Bottom)
+                    return true;
+            }
 
-            // check if the bottom edge intersects the circle
-            if (Math.Abs(c.Center.Y - r.Bottom) <= 0)
-                return true;
+            // check for a left/right rectangle edge collision
+            if(AxisMath.Between(c.Center.Y, r.Top, r.Bottom))
+            {
+                // check left edge
+                if (c.Right >= r.Left)
+                    return true;
 
-            // check if the left edge intersects the circle
-            if (Math.Abs(c.Center.X - r.Left) <= 0)
-                return true;
+                // check right edge
+                if (c.Left <= r.Right)
+                    return true;
+            }
 
             // if all else fails, return false
             return false;

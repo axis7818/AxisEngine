@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AxisEngine;
@@ -11,10 +7,14 @@ namespace AxisEngine.AxisDebug
 {
     public static class WireFrames
     {
-        public static Color Color = Color.Red;
+        public static Color Color = Color.Yellow;
+        public static GraphicsDevice GraphicsDevice = null;
         
-        public static Texture2D BoxWireFrame(Rectangle rectangle, GraphicsDevice graphicsDevice)
+        public static Texture2D BoxWireFrame(Rectangle rectangle)
         {
+            if (GraphicsDevice == null)
+                throw new MissingFieldException("Must set the GraphicsDevice field on WireFrames before any wire frames can be generated.");
+
             int width = rectangle.Width, height = rectangle.Height;
             Color[] data = new Color[width * height];
             for(int i = 0; i < width; i++)
@@ -33,14 +33,35 @@ namespace AxisEngine.AxisDebug
                 data[(i + 1) * width - 1] = Color;
             }
 
-            Texture2D result = new Texture2D(graphicsDevice, width, height);
+            Texture2D result = new Texture2D(GraphicsDevice, width, height);
             result.SetData(data);
             return result;
         }
-
-        public static Texture2D CircleWireFrame(Circle circle, GraphicsDevice graphicsDevice)
+        
+        public static Texture2D CircleWireFrame(Circle circle)
         {
-            throw new NotImplementedException();
+            if (GraphicsDevice == null)
+                throw new MissingFieldException("Must set the GraphicsDevice field on WireFrames before any wire frames can be generated.");
+
+            int diameter = circle.Radius * 2;
+            Color[] data = new Color[diameter * diameter];
+
+            double delta = Math.Atan((double)1 / circle.Radius);
+            for(double t = 0; t < 2 * Math.PI + delta; t += delta)
+            {
+                double y = circle.Radius * (1 - Math.Sin(t));
+                int y_int = (int)AxisMath.Clamp(y, 0, diameter);
+                double x = circle.Radius * (1 + Math.Cos(t));
+                int x_int = (int)AxisMath.Clamp(x, 0, diameter);
+
+                int i = y_int * diameter + x_int;
+
+                data[i] = Color;
+            }
+
+            Texture2D result = new Texture2D(GraphicsDevice, diameter, diameter);
+            result.SetData(data);
+            return result;
         }
     }
 }

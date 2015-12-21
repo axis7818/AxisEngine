@@ -5,23 +5,20 @@ namespace AxisEngine.Physics
 {
     public class TimeManager
     {
+        public bool TimeStopped = false;
+
         private float _timeMultiplier;
 
         public float TimeMultiplier
         {
-            get
-            {
-                return TimeStopped ? 0 : _timeMultiplier;
-            }
+            get { return TimeStopped ? 0 : _timeMultiplier; }
             set
             {
                 if (value >= 0)
                     _timeMultiplier = value;
             }
         }
-
-        public bool TimeStopped = false;
-
+        
         public TimeManager(float timeMultiplier = 1)
         {
             TimeMultiplier = timeMultiplier;

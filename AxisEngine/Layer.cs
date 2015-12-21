@@ -11,6 +11,7 @@ namespace AxisEngine
     {
         private bool _enabled;
         private int _updateOrder;
+
         private List<WorldObject> WorldObjects;
 
         public Layer(CollisionManager collisionManager, DrawManager drawManager, TimeManager timeManager, params WorldObject[] worldObjects)
@@ -184,11 +185,6 @@ namespace AxisEngine
         private void worldObject_UpdateOrderChanged(object sender, EventArgs e)
         {
             SortUpdateOrder();
-        }
-
-        public void DrawWireFrames()
-        {
-            DrawManager.DrawWireFrames(CollisionManager);
         }
     }
 }

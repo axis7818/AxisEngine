@@ -16,6 +16,9 @@ namespace AxisEngine.Visuals
         private SpriteBatch _spriteBatch;
         private List<IDrawManageable> _thingsToDraw;
 
+        private CollisionManager collisionManager = null;
+        private bool _drawWireFrames = false;
+
         public DrawManager(GraphicsDevice graphicsDevice)
         {
             // initialize some members
@@ -94,19 +97,37 @@ namespace AxisEngine.Visuals
                     }
                 }
 
+                if (_drawWireFrames && collisionManager != null)
+                {
+                    foreach(ICollidable coll in collisionManager)
+                    {
+                        if(coll.WireFrame != null)
+                        {
+                            Vector2 drawPosition = coll.Position;
+                            if (coll.Type == ColliderType.CIRCLE_COLLIDER)
+                            {
+                                int offset = (coll as CircleCollider).Bounds.Radius;
+                                drawPosition -= new Vector2(offset, offset);
+                            }
+                            _spriteBatch.Draw(coll.WireFrame, drawPosition, Color.White);
+                        }
+                    }
+                }
+
                 _spriteBatch.End();
             }
         }
 
         public void DrawWireFrames(CollisionManager collisionManager)
         {
-            _spriteBatch.Begin();
-            foreach(ICollidable coll in collisionManager)
-            {
-                if(coll.WireFrame != null)
-                    _spriteBatch.Draw(coll.WireFrame, coll.Position, Color.White);
-            }
-            _spriteBatch.End();
+            _drawWireFrames = true;
+            this.collisionManager = collisionManager;
+        }
+
+        public void StopDrawingWireFrames()
+        {
+            _drawWireFrames = false;
+            collisionManager = null;
         }
 
         public void Remove(IDrawManageable toRemove)

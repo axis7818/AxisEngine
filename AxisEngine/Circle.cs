@@ -6,18 +6,18 @@ namespace AxisEngine
     public class Circle
     {
         private Point Position;
-        private int Radius;
+        private int radius;
 
         public Circle(int x, int y, int radius)
         {
             Position = new Point(x, y);
-            Radius = radius;
+            this.radius = radius;
         }
 
         public Circle(Point center, int radius)
         {
             Position = center;
-            Radius = radius;
+            this.radius = radius;
         }
 
         public static Circle Empty
@@ -27,7 +27,7 @@ namespace AxisEngine
 
         public int Bottom
         {
-            get { return Position.Y + Radius; }
+            get { return Position.Y + radius; }
         }
 
         public Point Center
@@ -37,34 +37,34 @@ namespace AxisEngine
 
         public bool IsEmpty
         {
-            get { return Position.X == 0 && Position.Y == 0 && Radius == 0; }
+            get { return Position.X == 0 && Position.Y == 0 && radius == 0; }
         }
 
         public int Left
         {
-            get { return Position.X - Radius; }
+            get { return Position.X - radius; }
         }
 
         public int Right
         {
-            get { return Position.X + Radius; }
+            get { return Position.X + radius; }
         }
 
-        public int Size
+        public int Radius
         {
-            get { return Radius; }
+            get { return radius; }
         }
 
         public int Top
         {
-            get { return Position.Y - Radius; }
+            get { return Position.Y - radius; }
         }
 
         public static Circle Intersect(Circle A, Circle B)
         {
             Circle bigger;
             Circle smaller;
-            if (A.Radius > B.Radius)
+            if (A.radius > B.radius)
             {
                 bigger = B;
                 smaller = A;
@@ -76,11 +76,11 @@ namespace AxisEngine
             }
 
             if (bigger.Contains(smaller))
-                return new Circle(smaller.Center, smaller.Radius);
+                return new Circle(smaller.Center, smaller.radius);
 
             Vector2 distance = new Vector2(A.Center.X - B.Center.X, A.Center.Y - B.Center.Y);
             Point center = new Point((A.Center.X + B.Center.X) / 2, (A.Center.Y + B.Center.Y) / 2);
-            int radius = (int)Math.Abs(distance.Length() - A.Radius - B.Radius) / 2;
+            int radius = (int)Math.Abs(distance.Length() - A.radius - B.radius) / 2;
             return new Circle(center, radius);
         }
 
@@ -91,14 +91,14 @@ namespace AxisEngine
 
         public static bool operator ==(Circle A, Circle B)
         {
-            return A.Center.X == B.Center.X && A.Center.Y == B.Center.Y && A.Radius == B.Radius;
+            return A.Center.X == B.Center.X && A.Center.Y == B.Center.Y && A.radius == B.radius;
         }
 
         public static Circle Union(Circle A, Circle B)
         {
             Circle bigger;
             Circle smaller;
-            if (A.Radius > B.Radius)
+            if (A.radius > B.radius)
             {
                 bigger = A;
                 smaller = B;
@@ -110,18 +110,18 @@ namespace AxisEngine
             }
 
             if (bigger.Contains(smaller))
-                return new Circle(bigger.Center, bigger.Radius);
+                return new Circle(bigger.Center, bigger.radius);
 
             Vector2 distance = new Vector2(A.Center.X - B.Center.X, A.Center.Y - B.Center.Y);
             Point center = new Point((A.Center.X + B.Center.X) / 2, (A.Center.Y + B.Center.Y) / 2);
-            int radius = (int)Math.Abs(distance.Length() + A.Radius + B.Radius) / 2;
+            int radius = (int)Math.Abs(distance.Length() + A.radius + B.radius) / 2;
             return new Circle(center, radius);
         }
 
         public bool Contains(Circle other)
         {
             Vector2 distance = new Vector2(Position.X - other.Position.X, Position.Y - other.Position.Y);
-            return (distance.Length() + other.Radius) <= Radius;
+            return (distance.Length() + other.radius) <= radius;
         }
 
         public bool Contains(Point point)
@@ -141,22 +141,22 @@ namespace AxisEngine
 
         public void Inflate(int amount)
         {
-            Radius += amount;
-            if (Radius < 0)
+            radius += amount;
+            if (radius < 0)
                 throw new ArgumentException("Radius cannot be less than 0");
         }
 
         public void Inflate(float amount)
         {
-            Radius += (int)amount;
-            if (Radius < 0)
+            radius += (int)amount;
+            if (radius < 0)
                 throw new ArgumentException("Radius cannot be less than 0");
         }
 
         public bool Intersects(Circle other)
         {
             Vector2 distance = new Vector2(Center.X - other.Center.X, Center.Y - other.Center.Y);
-            return distance.Length() <= Radius + other.Radius;
+            return distance.Length() <= radius + other.radius;
         }
 
         public void Offset(Point amount)
@@ -185,7 +185,7 @@ namespace AxisEngine
             string result = "";
             result += "X: " + Position.X;
             result += " Y: " + Position.Y;
-            result += " r: " + Radius;
+            result += " r: " + radius;
             return result;
         }
 
@@ -196,7 +196,7 @@ namespace AxisEngine
 
         public override int GetHashCode()
         {
-            return Radius.GetHashCode() + Position.GetHashCode();
+            return radius.GetHashCode() + Position.GetHashCode();
         }
     }
 }

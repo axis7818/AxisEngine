@@ -152,19 +152,8 @@ namespace AxisEngine
             {
                 foreach (DrawManager drawer in DrawManagers.Values)
                     drawer.Draw(t);
-            }
-        }
 
-        public void DrawWireFrames()
-        {
-            HashSet<CollisionManager> drawn = new HashSet<CollisionManager>();
-            foreach(Layer layer in Layers)
-            {
-                if (!drawn.Contains(layer.CollisionManager))
-                {
-                    layer.DrawWireFrames();
-                    drawn.Add(layer.CollisionManager);
-                }
+                
             }
         }
 
