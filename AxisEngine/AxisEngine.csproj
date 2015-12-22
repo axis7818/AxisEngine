@@ -58,10 +58,10 @@
     <Compile Include="AxisDebug\Grid.cs" />
     <Compile Include="AxisDebug\Log.cs" />
     <Compile Include="DoubleKeyMap.cs" />
+    <Compile Include="InvalidComponentsException.cs" />
     <Compile Include="Layer.cs" />
     <Compile Include="LayerEventArgs.cs" />
     <Compile Include="Physics\Body.cs" />
-    <Compile Include="Physics\BodyParams.cs" />
     <Compile Include="Physics\BoxCollider.cs" />
     <Compile Include="Physics\CircleCollider.cs" />
     <Compile Include="Physics\ColliderType.cs" />
@@ -69,7 +69,6 @@
     <Compile Include="Physics\CollisionManager.cs" />
     <Compile Include="Physics\ICollidable.cs" />
     <Compile Include="Physics\TimeManager.cs" />
-    <Compile Include="Physics\Trigger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserInput\Input.cs" />
     <Compile Include="UserInput\MouseButtons.cs" />

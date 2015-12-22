@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace AxisEngine
@@ -68,7 +69,7 @@ namespace AxisEngine
             set
             {
                 _owner = value;
-                if (_owner != null)
+                if (_owner != null && !_owner.GetComponents().Contains(this))
                 {
                     _owner.AddComponent(this);
                 }
@@ -160,13 +161,13 @@ namespace AxisEngine
 
         public void AddComponent(WorldObject component)
         {
-            if (!_components.Contains(component))
-            {
-                _components.Add(component);
-                if (component.Owner != this)
-                    component.Owner = this;
-                OnComponentAdded(component);
-            }
+            _components.Add(component);
+            if (component.Owner != this)
+                component.Owner = this;
+            OnComponentAdded(component);
+
+            if (!CircularComponentCheck(RootObject))
+                throw new InvalidComponentsException("An invalid component configuration was detected. Make sure you do not have duplicate components or a circular arrangement of components.");
         }
 
         public void AddComponents(IEnumerable<WorldObject> components)
@@ -252,6 +253,30 @@ namespace AxisEngine
             foreach (WorldObject wo in _components)
                 if (wo.Enabled)
                     wo.Update(t);
+        }
+
+        public static bool CircularComponentCheck(WorldObject root)
+        {
+            return CircularComponentCheck(root, new HashSet<WorldObject>());
+        }
+
+        private static bool CircularComponentCheck(WorldObject root, HashSet<WorldObject> log)
+        {
+            // check if the root is in the log, if it is, that means that we have a loop
+            if (log.Contains(root))
+                return false;
+
+            // otherwise add the root, and perform a recursive call on all of the components.
+            log.Add(root);
+            foreach(WorldObject wo in root.GetComponents())
+            {
+                // if any fail, then stop checking.
+                if (!CircularComponentCheck(wo, log))
+                    return false;
+            }
+
+            // if none failed, then it checks out
+            return true;
         }
     }
 }
