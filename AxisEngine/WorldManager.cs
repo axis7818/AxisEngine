@@ -3,59 +3,61 @@ using System.Collections.Generic;
 
 namespace AxisEngine
 {
-    /// <summary>
-    /// an object to facilitate the transitions between Worlds
-    /// </summary>
-    public static class WorldManager
+    public class WorldManager
     {
-        /// <summary>
-        /// the world currently activated
-        /// </summary>
-        private static World _currentWorld;
+        private string _defaultWorld;
+        private string _currentWorld;
+        private Dictionary<string, World> _worlds;
 
-        /// <summary>
-        /// the worlds within the manager
-        /// </summary>
-        private static Dictionary<string, World> Worlds;
-
-        /// <summary>
-        /// initializes the WorldManager
-        /// </summary>
-        static WorldManager()
+        public WorldManager(World defaultWorld)
         {
-            Worlds = new Dictionary<string, World>();
+            _worlds = new Dictionary<string, World>();
+            _defaultWorld = defaultWorld.Name;           
+            _currentWorld = _defaultWorld;
+            AddWorld(defaultWorld);
+            CurrentWorld.Initialize();
         }
 
-        /// <summary>
-        /// fires when the current world is changing
-        /// </summary>
-        public static event EventHandler<WorldChangingEventArgs> CurrentWorldChanged;
+        public event EventHandler<WorldChangingEventArgs> CurrentWorldChanging;
+        public event EventHandler<EventArgs> ReadyToQuit;
 
-        /// <summary>
-        /// the world currently activated
-        /// </summary>
-        public static World CurrentWorld
+        public World CurrentWorld
         {
-            get
-            {
-                return _currentWorld;
-            }
-            private set
-            {
-                OnCurrentWorldChanging(_currentWorld, value);
-                _currentWorld = value;
-            }
+            get { return _worlds[_currentWorld]; }
         }
 
-        /// <summary>
-        /// handles the CurrentWorldChanged event
-        /// </summary>
-        /// <param name="sender">the object that triggered the event</param>
-        /// <param name="args">the arguments associated with the event</param>
-        private static void OnCurrentWorldChanging(World oldWorld, World newWorld)
+        public void AddWorld(World world)
         {
-            if (CurrentWorldChanged != null)
-                CurrentWorldChanged(null, new WorldChangingEventArgs(oldWorld, newWorld));
+            _worlds[world.Name] = world;
+            world.EndWorld += WorldEndedHandler;
+        }
+
+        private void WorldEndedHandler(object sender, WorldChangingEventArgs args)
+        {
+            if (args.Quit)
+            {
+                if (ReadyToQuit != null)
+                    ReadyToQuit(this, EventArgs.Empty);
+                return;
+            }
+
+            if (!_worlds.ContainsKey(args.NewWorld))
+                throw new InvalidOperationException("could not find world: " + args.NewWorld);
+
+            if (CurrentWorldChanging != null)
+                CurrentWorldChanging(this, args);
+
+            if (args.Cancel)
+                return;
+
+            SetCurrentWorld(args.NewWorld);
+        }
+
+        private void SetCurrentWorld(string world)
+        {
+            CurrentWorld.Dispose();
+            _currentWorld = world;
+            CurrentWorld.Initialize();
         }
     }
 }

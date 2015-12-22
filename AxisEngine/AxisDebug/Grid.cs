@@ -1,63 +1,30 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
+using System;
 
-namespace AxisEngine.Debug
+namespace AxisEngine.AxisDebug
 {
     public static class Grid
     {
-        /// <summary>
-        /// The number of pixels between each grid line
-        /// </summary>
         public static int GridSpacing = 10;
-
-        /// <summary>
-        /// The number of minor grid lines between major grid lines
-        /// </summary>
         public static int MajorGridSpacing = 5;
-
-        /// <summary>
-        /// The color to draw the Major grid lines
-        /// </summary>
         public static Color MajorGridColor = Color.LimeGreen;
-
-        /// <summary>
-        /// The color to draw the minor grid lines
-        /// </summary>
         public static Color MinorGridColor = Color.LightSeaGreen;
-
-        /// <summary>
-        /// The visibility of the grid
-        /// </summary>
         private static bool _visible = false;
 
-        /// <summary>
-        /// The visibility of the grid
-        /// </summary>
         public static bool Visible
         {
-            get
-            {
-                return _visible;
-            }
+            get { return _visible; }
             set
             {
                 _visible = value;
-                if(VisibleChanged != null)
-                {
+                if (VisibleChanged != null)
                     VisibleChanged(null, new EventArgs());
-                }
             }
         }
 
-        /// <summary>
-        /// fired when visible changes
-        /// </summary>
         public static event EventHandler<EventArgs> VisibleChanged;
 
-        /// <summary>
-        /// draws the grid
-        /// </summary>
         public static void Draw(GraphicsDevice graphicsDevice)
         {
             if (Visible)
@@ -78,7 +45,7 @@ namespace AxisEngine.Debug
         {
             // Draw vertical lines
             int count = 0;
-            for(int i = 0; i < screenWidth + 1; i += GridSpacing, count++)
+            for (int i = 0; i < screenWidth + 1; i += GridSpacing, count++)
             {
                 // get the color, start, and end position
                 Color color = count % MajorGridSpacing == 0 ? MajorGridColor : MinorGridColor;
@@ -90,8 +57,8 @@ namespace AxisEngine.Debug
             }
 
             // Draw horizontal lines
-            count = 0; 
-            for(int i = 0; i < screenHeight + 1; i += GridSpacing, count++)
+            count = 0;
+            for (int i = 0; i < screenHeight + 1; i += GridSpacing, count++)
             {
                 // get the color, start, and end position
                 Color color = count % MajorGridSpacing == 0 ? MajorGridColor : MinorGridColor;
@@ -103,9 +70,6 @@ namespace AxisEngine.Debug
             }
         }
 
-        /// <summary>
-        /// draws a line
-        /// </summary>
         private static void DrawLine(SpriteBatch spriteBatch, Texture2D texture, Color color, Vector2 start, Vector2 end)
         {
             Vector2 edge = end - start;

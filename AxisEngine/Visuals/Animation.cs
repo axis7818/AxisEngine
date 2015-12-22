@@ -1,81 +1,122 @@
 ﻿using Microsoft.Xna.Framework;
-using System.Collections.Generic;
-using System.Linq;
+using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace AxisEngine.Visuals
 {
-    /// <summary>
-    /// A collection of animation frames that are strung together to form the animation
-    /// </summary>
-    public class Animation : List<AnimationFrame>
+    public class Animation
     {
-        /// <summary>
-        /// The amount of time to complete the animation
-        /// </summary>
-        public float Length;
+        private Texture2D _atlas;
+        private Rectangle _sourceRectangle;
+        private int _rows;
+        private int _columns;
+        private int _current;
+        private int _cellWidth;
+        private int _cellHeight;
+        private int _totalCells;
+        private float _frameTime;
+        private float _timer;
+        private bool _finishBeforeTransition;
+        private bool _waitingForFinish;
 
         /// <summary>
-        /// the index of the frame to be displayed
+        /// totalCells is the number of occupied cells in "reading" order (left -> right, top -> bottom)
+        /// if totalCells is 0 or less, it is assumed that all cells are used.
+        /// Duration is in milliseconds
         /// </summary>
-        private int CurrentFrame = 0;
-
-        /// <summary>
-        /// a timer to count the time (in milliseconds) that the animation has been played. The timer resets after the animation loops
-        /// </summary>
-        private float Timer = 0.0f;
-
-        /// <summary>
-        /// initializes an animation
-        /// </summary>
-        /// <param name="length">the amount of time in seconds that it takes to complete the animation</param>
-        public Animation(float length)
+        public Animation(Texture2D atlas, float duration, int rows, int columns, int totalCells = 0, bool finishBeforeTransition = false)
         {
-            Length = length;
+            if (atlas == null)
+                throw new ArgumentNullException();
+
+            _atlas = atlas;
+            _rows = rows > 0 ? rows : 1;
+            _columns = columns > 0 ? columns : 1;
+            _current = 0;
+            _totalCells = totalCells > 0 ?
+                totalCells :
+                _rows * _columns;
+            _frameTime = duration / _totalCells;
+            _timer = 0;
+            _cellWidth = atlas.Width / _columns;
+            _cellHeight = atlas.Height / _rows;
+            _finishBeforeTransition = finishBeforeTransition;
+            _waitingForFinish = false;
+
+            _sourceRectangle = new Rectangle(0, 0, _cellWidth, _cellHeight);
+            ResetSourceRectangle();
         }
 
-        /// <summary>
-        /// gets the frame that is currently being displayed
-        /// </summary>
-        public AnimationFrame Frame
+        public event EventHandler<AnimationEventArgs> AnimationFinished;
+
+        public int Width
         {
-            get
+            get { return _cellWidth; }
+        }
+
+        public int Height
+        {
+            get { return _cellHeight; }
+        }
+
+        public bool FinishBeforeTransition
+        {
+            get { return _finishBeforeTransition; }
+        }
+
+        public Texture2D Texture
+        {
+            get { return _atlas; }
+        }
+
+        public Rectangle SourceRectangle
+        {
+            get { return _sourceRectangle; }
+        }
+
+        public float Duration
+        {
+            get { return _frameTime * _totalCells; }
+            set { _frameTime = value / _totalCells; }
+        }
+
+        public void Update(GameTime t)
+        {
+            _timer += t.ElapsedGameTime.Milliseconds;
+            if(_timer > _frameTime)
             {
-                return this[CurrentFrame];
+                _timer %= _frameTime;
+                _current = (_current + 1) % _totalCells;
+                ResetSourceRectangle();
+
+                if (_waitingForFinish && _current == 0)
+                {
+                    _waitingForFinish = false;
+                    if (AnimationFinished != null)
+                        AnimationFinished(this, new AnimationEventArgs(this));
+                    AnimationFinished = null;
+                }
             }
         }
 
-        /// <summary>
-        /// Checks to see if the frames on the animation have the correct indexes for the available frames
-        /// </summary>
-        /// <param name="numberOfFrames">the number of frames that the animation has access to</param>
-        /// <returns>whether or not the each animation frame has the correct indexing</returns>
-        public bool HasValidFrames(int numberOfFrames)
-        {
-            return this.All(frame => frame.Index >= 0 && frame.Index <= numberOfFrames);
-        }
-
-        /// <summary>
-        /// updates the animation
-        /// </summary>
-        /// <param name="t">the time elapsed since the last update</param>
-        public void Update(GameTime t)
-        {
-            // update the timer
-            Timer += t.ElapsedGameTime.Milliseconds;
-            Timer %= Length * 1000;
-
-            // get the current frame
-            int frame = (int)(Timer * Count / (Length * 1000));
-            CurrentFrame = frame;
-        }
-
-        /// <summary>
-        /// Resets the animation to the first frame
-        /// </summary>
         public void Reset()
         {
-            Timer = 0.0f;
-            CurrentFrame = 0;
+            _timer = 0;
+            _current = 0;
+            ResetSourceRectangle();
+        }
+        
+        private void ResetSourceRectangle()
+        {
+            int row = _current / _columns;
+            int col = _current % _columns;
+            _sourceRectangle.X = col * _cellWidth;
+            _sourceRectangle.Y = row * _cellHeight;
+        }
+
+        public void WaitForEnd()
+        {
+            _waitingForFinish = true;
         }
     }
 }

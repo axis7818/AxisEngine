@@ -1,134 +1,133 @@
-﻿using Microsoft.Xna.Framework;
-using System;
+﻿using System;
+using Microsoft.Xna.Framework;
+using AxisEngine;
 
 namespace AxisEngine.Physics
 {
-    /// <summary>
-    /// Provides a method of interaction with the physical world
-    /// </summary>
     public class Body : WorldObject
     {
-        /// <summary>
-        /// A set of physical parameters that determine the behavior of the Body
-        /// </summary>
-        public BodyParams Parameters;
+        public bool Static = false;
 
-        /// <summary>
-        /// The velocity of the object
-        /// </summary>
-        public Vector2 Velocity;
-
-        /// <summary>
-        /// A force that is applied from an external source
-        /// </summary>
-        private Vector2 ExternalForce;
-
-        /// <summary>
-        /// A force that is applied from within the object
-        /// </summary>
-        private Vector2 InternalForce;
-
-        /// <summary>
-        /// A reference to the root WorldObject
-        /// </summary>
-        private WorldObject BaseObject;
-
-        /// <summary>
-        /// The time scale
-        /// </summary>
-        private float TimeMultiplier
+        private WorldObject _baseObject;
+        private Vector2 _velocity = Vector2.Zero;
+        private Vector2 _targetVelocity = Vector2.Zero;
+        private float _resistance = 0;
+        
+        public Body()
         {
-            get
+            _baseObject = RootObject;
+        }
+
+        public float Resistance
+        {
+            get { return _resistance; }
+            set
             {
-                return Layer != null ? Layer.TimeManager.TimeMultiplier : 1;
+                _resistance = AxisMath.Clamp(value, 0.0f, 1.0f);
             }
         }
 
-        /// <summary>
-        /// initializes a new Body
-        /// </summary>
-        /// <param name="parameters">A set of physical properties that determine the body's behavior</param>
-        public Body(BodyParams parameters)
+        public Vector2 Velocity
         {
-            // set Properties
-            Parameters = parameters;
-            InternalForce = ExternalForce = Velocity = Vector2.Zero;
-            
-            base.OwnerChanged += OnOwnerChanged;
+            get { return _velocity; }
         }
 
-        /// <summary>
-        /// Adds a force to the object. This force comes from outside the object and doesn't have a limit
-        /// </summary>
-        /// <param name="force">the force to add</param>
-        public void AddExternalForce(Vector2 force)
+        public void Move(Vector2 velocity)
         {
-            ExternalForce += force;
+            _targetVelocity = velocity;
         }
 
-        /// <summary>
-        /// Adds a force to the object. This force has a maximum limit (set in the Parameters)
-        /// </summary>
-        /// <remarks>IF THIS ISN'T WORKING, CHECK TO MAKE SURE THAT THE FORCE IS STRONG ENOUGH TO OVERCOME FRICTION</remarks>
-        /// <param name="force">The force to add</param>
-        public void AddInternalForce(Vector2 force)
+        protected override void UpdateThis(GameTime t)
         {
-            InternalForce += force;
-
-            // restrict the length of the vector
-            if (InternalForce.Length() > Parameters.MaxInternalForce)
+            if (!Static)
             {
-                InternalForce = Vector2.Normalize(InternalForce) * Parameters.MaxInternalForce;
+                _velocity += (_targetVelocity - _velocity) * (1 - _resistance);
+                _baseObject.Position += _velocity * (Layer != null ? Layer.TimeManager.TimeMultiplier : 1);
+                _targetVelocity = Vector2.Zero;
             }
         }
 
-        /// <summary>
-        /// Updates the body
-        /// </summary>
-        /// <param name="t">the amount of time that has passed since the last update</param>
-        public override void UpdateThis(GameTime t)
+        protected override void OnOwnerChanged(WorldObject owner)
         {
-            if (!Parameters.Static)
-            {
-                // get the new velocity
-                float time = (float)t.ElapsedGameTime.TotalSeconds;
-                Vector2 netForce = InternalForce + ExternalForce;
-                Velocity += (time * Parameters.InvMass) * netForce;
-                
-                // apply friction
-                if (Velocity.LengthSquared() > 0)
-                {
-                    Vector2 friction = -Vector2.Normalize(Velocity) * Parameters.Mass * 9.81f * Parameters.FrictionCoefficient;
-                    Vector2 frictionDeltaV = friction * (time * Parameters.InvMass);
-                    if (frictionDeltaV.LengthSquared() <= Velocity.LengthSquared())
-                    {
-                        Velocity += frictionDeltaV;
-                    }
-                    else
-                    {
-                        // stop the body if the change in velocity is greater than the velocity itself
-                        Velocity = Vector2.Zero;
-                    }
-                }
-
-                // clear the forces
-                InternalForce = ExternalForce = Vector2.Zero;
-
-                // apply the velocity
-                BaseObject.Position += Velocity * TimeMultiplier;
-            }
-
-            base.UpdateThis(t);
-        }
-
-        /// <summary>
-        /// Handles functionality when the owner of the Body has changed
-        /// </summary>
-        /// <param name="sender">The sender of the event</param>
-        /// <param name="args">Arguments associated with the event</param>
-        private void OnOwnerChanged(object sender, WorldObjectEventArgs args)
-        {
-            BaseObject = RootObject;
+            base.OnOwnerChanged(owner);
+            _baseObject = RootObject;
         }
     }
+
+    /* OLD METHOD - WAS TOO COMPLEX/REALISTIC, TRYING TO IMPLEMENT SOMETHING SIMPLER AND ARCADEY */
+    //public class Body : WorldObject
+    //{
+    //    public BodyParams Parameters;
+    //    public Vector2 Velocity;
+
+    //    private Vector2 ExternalForce;
+    //    private Vector2 InternalForce;
+    //    private WorldObject BaseObject;
+
+    //    public Body(BodyParams parameters)
+    //    {
+    //        // set Properties
+    //        Parameters = parameters;
+    //        InternalForce = ExternalForce = Velocity = Vector2.Zero;
+
+    //        OwnerChanged += OnOwnerChanged;
+    //    }
+
+    //    private float TimeMultiplier
+    //    {
+    //        get { return Layer != null ? Layer.TimeManager.TimeMultiplier : 1; }
+    //    }
+
+    //    public void AddExternalForce(Vector2 force)
+    //    {
+    //        ExternalForce += force;
+    //    }
+
+    //    public void AddInternalForce(Vector2 force)
+    //    {
+    //        InternalForce += force;
+
+    //        // restrict the length of the vector
+    //        if (InternalForce.Length() > Parameters.MaxInternalForce) 
+    //            InternalForce = Vector2.Normalize(InternalForce) * Parameters.MaxInternalForce; 
+    //    }
+
+    //    protected override void UpdateThis(GameTime t)
+    //    {
+    //        if (!Parameters.Static)
+    //        {
+    //            // get the new velocity
+    //            float time = (float)t.ElapsedGameTime.TotalSeconds;
+    //            Vector2 netForce = InternalForce + ExternalForce;
+    //            Velocity += (time * Parameters.InvMass) * netForce;
+
+    //            // apply friction
+    //            if (Velocity.LengthSquared() > 0)
+    //            {
+    //                Vector2 friction = -Vector2.Normalize(Velocity) * Parameters.Mass * 9.81f * Parameters.FrictionCoefficient;
+    //                Vector2 frictionDeltaV = friction * (time * Parameters.InvMass);
+    //                if (frictionDeltaV.LengthSquared() <= Velocity.LengthSquared())
+    //                {
+    //                    Velocity += frictionDeltaV;
+    //                }
+    //                else
+    //                {
+    //                    // stop the body if the change in velocity is greater than the velocity itself
+    //                    Velocity = Vector2.Zero;
+    //                }
+    //            }
+
+    //            // clear the forces
+    //            InternalForce = ExternalForce = Vector2.Zero;
+
+    //            // apply the velocity
+    //            BaseObject.Position += Velocity * TimeMultiplier;
+    //        }
+    //    }
+
+    //    private void OnOwnerChanged(object sender, WorldObjectEventArgs args)
+    //    {
+    //        BaseObject = RootObject;
+    //    }
+    //}
 }

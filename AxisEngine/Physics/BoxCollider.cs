@@ -1,62 +1,76 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace AxisEngine.Physics
 {
-    /// <summary>
-    /// a rectangle collider
-    /// </summary>
-    public class BoxCollider : WorldObject, ICollisionManageable
+    public class BoxCollider : WorldObject, ICollidable
     {
-        /// <summary>
-        /// the dimensions of the collider
-        /// </summary>
         private Point Dimensions;
+        private Texture2D _wireFrame = null;
 
-        /// <summary>
-        /// creates a new Box Collider with the given dimensions
-        /// </summary>
         public BoxCollider(Point dimensions)
         {
             Dimensions = dimensions;
         }
 
-        /// <summary>
-        /// the rectangle that represents the collider
-        /// </summary>
+        public Texture2D WireFrame
+        {
+            get { return _wireFrame; }
+            set { _wireFrame = value; }
+        }
+
         public Rectangle Bounds
         {
-            get
-            {
-                return new Rectangle(Position.ToPoint(), Dimensions);
-            }
+            get { return new Rectangle(Position.ToPoint(), Dimensions); }
         }
 
-        /// <summary>
-        /// gets the point in the game world that represents the center of the collider
-        /// </summary>
         public Point CenterPoint
         {
-            get
-            {
-                return new Point((int)(Position.X + Dimensions.X * 0.5f), (int)(Position.Y + Dimensions.Y * 0.5f));
-            }
+            get { return new Point((int)(Position.X + Dimensions.X * 0.5f), (int)(Position.Y + Dimensions.Y * 0.5f)); }
         }
 
-        /// <summary>
-        /// centers the collider with the dimensions
-        /// </summary>
+        public ColliderType Type
+        {
+            get { return ColliderType.BOX_COLLIDER; }
+        }
+
+        public event EventHandler<CollisionEventArgs> CollisionStart;
+        public event EventHandler<CollisionEventArgs> CollisionEnd;
+
         public void Center()
         {
             Position = new Vector2(BasePosition.X - Dimensions.X * 0.5f, BasePosition.Y - Dimensions.Y * 0.5f);
         }
 
-        /// <summary>
-        /// determines if the Box Collider overlaps with the given trigger
-        /// </summary>
-        /// <param name="trigger">the trigger to check against</param>
-        public bool Intersects(Trigger trigger)
+        public bool Intersects(ICollidable coll)
         {
-            return trigger.Intersects(Bounds);
+            switch (coll.Type)
+            {
+                case ColliderType.BOX_COLLIDER:
+                    return CollisionManager.Collides(Bounds, (coll as BoxCollider).Bounds);
+                case ColliderType.CIRCLE_COLLIDER:
+                    return CollisionManager.Collides(Bounds, (coll as CircleCollider).Bounds);
+                default:
+                    throw new InvalidOperationException("Incompatable Collider Type.");
+            }
+        }
+
+        protected override void UpdateThis(GameTime t)
+        {
+            
+        }
+
+        public void InvokeCollision(CollisionEventArgs args)
+        {
+            if (CollisionStart != null)
+                CollisionStart(this, args);    
+        }
+
+        public void RevokeCollision(CollisionEventArgs args)
+        {
+            if (CollisionEnd != null)
+                CollisionEnd(this, args);
         }
     }
 }

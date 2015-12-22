@@ -1,269 +1,149 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using System.Collections.Generic;
 
 namespace AxisEngine.Visuals
 {
-    /// <summary>
-    /// A world object that displays and animated sprite
-    /// </summary>
     public class Animator : WorldObject, IDrawManageable
     {
-        /// <summary>
-        /// whether or not the animator centers the sprites
-        /// </summary>
-        public bool Center = false;
+        public const string DEFAULT = "DEFAULT_ANIMATION";
 
-        /// <summary>
-        /// the current animation that is playing
-        /// </summary>
-        private Animation _currentAnimation;
+        private Dictionary<string, Animation> _animations;
+        private string _currentAnimation;
+        private Vector2 _offset;
+        private int _drawOrder;
 
-        /// <summary>
-        /// sets the net orgin for all textures
-        /// </summary>
-        private Vector2 _orgin = new Vector2(0, 0);
-
-        /// <summary>
-        /// A list of animations to play
-        /// </summary>
-        private Dictionary<string, Animation> Animations;
-
-        /// <summary>
-        /// the set of textures to pull from
-        /// </summary>
-        private List<Texture2D> Textures;
-
-        /// <summary>
-        /// instantiates an Animator
-        /// </summary>
-        /// <param name="textures">The collection of textures that will be pulled from (by index)</param>
-        public Animator(List<Texture2D> textures)
+        public Animator(Animation defaultAnimation)
         {
-            Textures = textures;
-            Animations = new Dictionary<string, Animation>();
+            _offset = Vector2.Zero;
+
+            _animations = new Dictionary<string, Animation>();
+            _currentAnimation = DEFAULT;
+            _animations[DEFAULT] = defaultAnimation;
+                        
             DrawOrder = 0;
+            Color = Color.White;
+            Origin = Vector2.Zero;
+            Rotation = 0;
+            SpriteEffect = SpriteEffects.None;
+            LayerDepth = 0;
+            DestinationRectangle = null;
+            Visible = true;
         }
 
-        /// <summary>
-        /// instantiates an Animator
-        /// </summary>
-        /// <param name="textures">The collection of textures that will be pulled from (by index)</param>
-        /// <param name="drawOrder">The order in which to draw the animator</param>
-        public Animator(List<Texture2D> textures, int drawOrder)
+        public event EventHandler<EventArgs> DrawOrderChanged;
+        
+        public Rectangle? DestinationRectangle { get; set; }
+
+        public Rectangle? SourceRectangle
         {
-            Textures = textures;
-            Animations = new Dictionary<string, Animation>();
-            DrawOrder = drawOrder;
+            get { return CurrentAnimation.SourceRectangle; }
         }
 
-        /// <summary>
-        /// The color to apply to the texture
-        /// </summary>
-        public Color Color
-        {
-            get
-            {
-                if (CurrentAnimation != null)
-                {
-                    return CurrentAnimation.Frame.Color;
-                }
-                else
-                {
-                    return Color.White;
-                }
-            }
-        }
+        public float LayerDepth { get; set; }
 
-        /// <summary>
-        /// The order in which to draw the animator
-        /// </summary>
-        public int DrawOrder { get; set; }
-
-        /// <summary>
-        /// The offset to render the texture at
-        /// </summary>
-        public Vector2 Offset
-        {
-            get
-            {
-                return CurrentAnimation.Frame.Offset;
-            }
-        }
-
-        /// <summary>
-        /// the orgin of the sprites to draw (set Center to true to center the sprites). Setting this value applies the offset to all textures
-        /// </summary>
-        public Vector2 Orgin
-        {
-            get
-            {
-                Vector2 orgin = _orgin;
-                if (Center)
-                {
-                    orgin += new Vector2(Texture.Width * 0.5f, Texture.Height * 0.5f);
-                }
-                return orgin;
-            }
-            set
-            {
-                _orgin = value;
-            }
-        }
-
-        /// <summary>
-        /// gets the rotation of the frame to display. This combines the world object's rotation with the individual frame's rotation
-        /// </summary>
-        public new float Rotation
-        {
-            get
-            {
-                return base.Rotation + CurrentAnimation.Frame.Rotation;
-            }
-        }
-
-        /// <summary>
-        /// gets the scale of the frame to display. This combines the world object's scale with the individual frame's scale
-        /// </summary>
-        public new Vector2 Scale
-        {
-            get
-            {
-                return base.Scale * CurrentAnimation.Frame.Scale;
-            }
-        }
-
-        /// <summary>
-        /// gets the sprite effect to apply to the frame being displayed
-        /// </summary>
-        public SpriteEffects SpriteEffect
-        {
-            get
-            {
-                return CurrentAnimation.Frame.SpriteEffect;
-            }
-        }
-
-        /// <summary>
-        /// the texture to draw
-        /// </summary>
         public Texture2D Texture
         {
-            get
+            get { return CurrentAnimation.Texture; }
+        }
+
+        public SpriteEffects SpriteEffect { get; set; }
+
+        public Vector2 DrawPosition
+        {
+            get { return Position + _offset; }
+        }
+
+        public int DrawOrder
+        {
+            get { return _drawOrder; }
+            set
             {
-                int index;
-                if (CurrentAnimation != null)
+                _drawOrder = value;
+                if (DrawOrderChanged != null)
+                    DrawOrderChanged(this, EventArgs.Empty);
+            }
+        }
+
+        public Color Color { get; set; }
+
+        public Vector2 Origin { get; set; }
+
+        public bool Visible { get; set; }
+
+        public Animation CurrentAnimation
+        {
+            get { return _animations[_currentAnimation]; }
+        }
+
+        public int Width
+        {
+            get { return CurrentAnimation.Width; }
+        }
+
+        public int Height
+        {
+            get { return CurrentAnimation.Height; }
+        }
+
+        protected override void UpdateThis(GameTime t)
+        {
+            CurrentAnimation.Update(t);
+        }
+
+        public void RemoveAnimation(string name)
+        {
+            _animations.Remove(name);
+        }
+
+        public void AddAnimation(string name, Animation anim)
+        {
+            if (_animations.ContainsKey(name))
+                throw new ArgumentException("animation [" + name + "] is already in the animator");
+
+            _animations[name] = anim;
+        }
+
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw(Texture,
+                             DrawPosition,
+                             DestinationRectangle,
+                             SourceRectangle,
+                             Origin,
+                             Rotation,
+                             Scale,
+                             Color,
+                             SpriteEffect,
+                             LayerDepth);
+        }
+
+        public void SetCurrentAnimation(string name)
+        {
+            if (!_animations.ContainsKey(name))
+                throw new ArgumentException("cannot find the animation: " + name);
+
+            if(name != _currentAnimation)
+            {
+                if (!CurrentAnimation.FinishBeforeTransition)
                 {
-                    index = CurrentAnimation.Frame.Index;
+                    // Switch immediately to the new animation
+                    _currentAnimation = name;
+                    CurrentAnimation.Reset();                
                 }
                 else
                 {
-                    index = 0;
+                    // Set the current animation to wait for the end, upon finishing, switch animations
+                    CurrentAnimation.WaitForEnd();
+                    EventHandler<AnimationEventArgs> animSwitch = (sender, args) =>
+                    {
+                        _currentAnimation = name;
+                        CurrentAnimation.Reset();
+                    };
+                    CurrentAnimation.AnimationFinished += animSwitch;
                 }
-
-                return Textures[index];
             }
-        }
-
-        /// <summary>
-        /// the current animation that is playing
-        /// </summary>
-        public Animation CurrentAnimation
-        {
-            get
-            {
-                return _currentAnimation;
-            }
-            private set
-            {
-                bool reset = false;
-                if (_currentAnimation != value)
-                {
-                    reset = true;
-                }
-                _currentAnimation = value;
-
-                if (reset)
-                    _currentAnimation.Reset();
-            }
-        }
-
-        /// <summary>
-        /// Adds an animation to the Animator
-        /// </summary>
-        /// <param name="name">the name of the animation</param>
-        /// <param name="animation">the animation</param>
-        public void AddAnimation(string name, Animation animation)
-        {
-            if (Animations.ContainsKey(name))
-            {
-                throw new ArgumentException("the animation: " + name + " already exists in this Animator.");
-            }
-            else if (!animation.HasValidFrames(Textures.Count))
-            {
-                throw new ArgumentException("the animation's frames are not valid for use with this Animator.");
-            }
-
-            Animations[name] = animation;
-
-            if (CurrentAnimation == null)
-            {
-                CurrentAnimation = animation;
-            }
-        }
-
-        /// <summary>
-        /// Add a range of animations
-        /// </summary>
-        /// <param name="animations">dictionary that holds the animations to be added [key: name] [value: Animation]</param>
-        public void AddAnimations(Dictionary<string, Animation> animations)
-        {
-            foreach (string name in animations.Keys)
-            {
-                AddAnimation(name, animations[name]);
-            }
-        }
-
-        /// <summary>
-        /// removes an animation
-        /// </summary>
-        /// <param name="name">the name of the animation to remove</param>
-        public void RemoveAnimation(string name)
-        {
-            if (!Animations.ContainsKey(name))
-            {
-                throw new ArgumentException("The animation: " + name + " could not be found.");
-            }
-
-            Animations.Remove(name);
-        }
-
-        /// <summary>
-        /// Sets the current animation that is playing
-        /// </summary>
-        /// <param name="name">The name of the animation to select</param>
-        public void SetCurrentAnimation(string name)
-        {
-            if (!Animations.ContainsKey(name))
-            {
-                throw new ArgumentException("Could not find the animation: " + name);
-            }
-
-            CurrentAnimation = Animations[name];
-            //CurrentAnimation.Reset();
-        }
-
-        /// <summary>
-        /// overrides the update function from WorldObject
-        /// </summary>
-        /// <param name="t">The time elapsed since the last update</param>
-        public override void UpdateThis(GameTime t)
-        {
-            if (CurrentAnimation != null)
-                CurrentAnimation.Update(t);
-
-            base.UpdateThis(t);
         }
     }
 }

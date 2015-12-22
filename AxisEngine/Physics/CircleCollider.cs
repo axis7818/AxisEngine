@@ -1,54 +1,71 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace AxisEngine.Physics
 {
-    /// <summary>
-    /// a circular collider
-    /// </summary>
-    public class CircleCollider : WorldObject, ICollisionManageable
+    public class CircleCollider : WorldObject, ICollidable
     {
-        /// <summary>
-        /// the radius of the circle
-        /// </summary>
         private float Radius;
+        private Texture2D _wireFrame = null;
 
-        /// <summary>
-        /// creates a new CircleCollider with the given radius
-        /// </summary>
         public CircleCollider(float radius)
         {
             Radius = radius;
         }
 
-        /// <summary>
-        /// the circle that represents the collider
-        /// </summary>
+        public Texture2D WireFrame
+        {
+            get { return _wireFrame; }
+            set { _wireFrame = value; }
+        }
+
         public Circle Bounds
         {
-            get
-            {
-                return new Circle(Position.ToPoint(), (int)Radius);
-            }
+            get { return new Circle(Position.ToPoint(), (int)Radius); }
         }
 
-        /// <summary>
-        /// gets the point in the game world that represents the center of the collider
-        /// </summary>
         public Point CenterPoint
         {
-            get
+            get { return Position.ToPoint(); }
+        }
+
+        public ColliderType Type
+        {
+            get { return ColliderType.CIRCLE_COLLIDER; }
+        }
+
+        public event EventHandler<CollisionEventArgs> CollisionStart;
+        public event EventHandler<CollisionEventArgs> CollisionEnd;
+
+        public bool Intersects(ICollidable coll)
+        {
+            switch (coll.Type)
             {
-                return Position.ToPoint();
+                case ColliderType.BOX_COLLIDER:
+                    return CollisionManager.Collides((coll as BoxCollider).Bounds, Bounds);
+                case ColliderType.CIRCLE_COLLIDER:
+                    return CollisionManager.Collides(Bounds, (coll as CircleCollider).Bounds);
+                default:
+                    throw new InvalidOperationException("invalid collider type.");
             }
         }
 
-        /// <summary>
-        /// determines if the circle collider overlaps with the given trigger
-        /// </summary>
-        /// <param name="trigger">the trigger to check against</param>
-        public bool Intersects(Trigger trigger)
+        protected override void UpdateThis(GameTime t)
         {
-            return trigger.Intersects(Bounds);
+            
+        }
+
+        public void InvokeCollision(CollisionEventArgs args)
+        {
+            if (CollisionStart != null)
+                CollisionStart(this, args);
+        }
+
+        public void RevokeCollision(CollisionEventArgs args)
+        {
+            if (CollisionEnd != null)
+                CollisionEnd(this, args);
         }
     }
 }

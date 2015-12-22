@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using AxisEngine.Physics;
+using AxisEngine.AxisDebug;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections;
@@ -7,60 +9,31 @@ using System.Linq;
 
 namespace AxisEngine.Visuals
 {
-    /// <summary>
-    /// Manages the rendering of IDrawManageable objects
-    /// </summary>
     public class DrawManager : IDrawable, IEnumerable
     {
-        /// <summary>
-        /// the order in which the draw manager is drawn
-        /// </summary>
-        private int _drawOrder;
+        private int _drawOrder; 
+        private bool _visible; 
+        private SpriteBatch _spriteBatch;
+        private List<IDrawManageable> _thingsToDraw;
 
-        /// <summary>
-        /// whether or not the draw manager is drawing to the screen
-        /// </summary>
-        private bool _visible;
+        private CollisionManager collisionManager = null;
+        private bool _drawWireFrames = false;
 
-        /// <summary>
-        /// the sprite batch that will draw all of the objects
-        /// </summary>
-        private SpriteBatch SpriteBatch;
-
-        /// <summary>
-        /// The list of things that need to be drawn in the draw manager
-        /// </summary>
-        private List<IDrawManageable> ThingsToDraw;
-
-        /// <summary>
-        /// instantiates the DrawManager
-        /// </summary>
-        /// <param name="graphicsDevice">the Graphics device to draw to</param>
         public DrawManager(GraphicsDevice graphicsDevice)
         {
             // initialize some members
-            ThingsToDraw = new List<IDrawManageable>();
+            _thingsToDraw = new List<IDrawManageable>();
             GraphicsDevice = graphicsDevice;
-            SpriteBatch = new SpriteBatch(graphicsDevice);
+            _spriteBatch = new SpriteBatch(graphicsDevice);
 
             // set some values
             Visible = true;
             DrawOrder = 0;
         }
 
-        /// <summary>
-        /// fired when the DrawOrder property is changed
-        /// </summary>
         public event EventHandler<EventArgs> DrawOrderChanged;
-
-        /// <summary>
-        /// fired when the visible property is changed
-        /// </summary>
         public event EventHandler<EventArgs> VisibleChanged;
 
-        /// <summary>
-        /// the order in which the draw manager is drawn
-        /// </summary>
         public int DrawOrder
         {
             get { return _drawOrder; }
@@ -71,36 +44,18 @@ namespace AxisEngine.Visuals
             }
         }
 
-        /// <summary>
-        /// The graphics device that this is drawing to
-        /// </summary>
         public GraphicsDevice GraphicsDevice { get; private set; }
 
-        /// <summary>
-        /// gets the center of the screen in pxl coords
-        /// </summary>
-        public Vector2 ScreenCenter
+        public Point ScreenCenter
         {
-            get
-            {
-                return new Vector2(GraphicsDevice.Viewport.Width * 0.5f, GraphicsDevice.Viewport.Height * 0.5f);
-            }
+            get { return new Point(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2); }
         }
 
-        /// <summary>
-        /// gets the size of the screen in pxl coords
-        /// </summary>
-        public Vector2 ScreenSize
+        public Point ScreenSize
         {
-            get
-            {
-                return new Vector2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
-            }
+            get { return new Point(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height); }
         }
 
-        /// <summary>
-        /// whether or not the draw manager is drawing to the screen
-        /// </summary>
         public bool Visible
         {
             get { return _visible; }
@@ -111,76 +66,89 @@ namespace AxisEngine.Visuals
             }
         }
 
-        /// <summary>
-        /// gets the number of items being managed
-        /// </summary>
         public int Size
         {
-            get
-            {
-                return ThingsToDraw.Count;
-            }
+            get { return _thingsToDraw.Count; }
         }
 
-        /// <summary>
-        /// adds an IDrawManageable to the Manager
-        /// </summary>
-        /// <param name="toDraw">the IDrawManageable to add</param>
         public void AddDrawable(IDrawManageable toDraw)
         {
-            ThingsToDraw.Add(toDraw);
+            _thingsToDraw.Add(toDraw);
+            toDraw.DrawOrderChanged += DrawOrderChanged;
             SortByUpdateOrder();
         }
 
-        /// <summary>
-        /// Checks to see if the manager contains the IDrawManageable
-        /// </summary>
-        /// <param name="test">the IDrawManageable to test</param>
         public bool Contains(IDrawManageable test)
         {
-            return ThingsToDraw.Contains(test);
+            return _thingsToDraw.Contains(test);
         }
-
-        /// <summary>
-        /// draws all of the IDrawManageables
-        /// </summary>
-        /// <param name="t">the time elapsed since the last draw</param>
+        
         public virtual void Draw(GameTime t)
         {
             if (Visible)
             {
-                SpriteBatch.Begin();
+                _spriteBatch.Begin();
 
-                foreach (IDrawManageable toDraw in ThingsToDraw)
-                    SpriteBatch.Draw(toDraw.Texture, toDraw.Position + toDraw.Offset, null, null, toDraw.Orgin, toDraw.Rotation, toDraw.Scale, toDraw.Color, toDraw.SpriteEffect, 0);
+                foreach(IDrawManageable toDraw in _thingsToDraw)
+                {
+                    if (toDraw.Visible)
+                    {
+                        toDraw.Draw(_spriteBatch);
+                    }
+                }
 
-                SpriteBatch.End();
+                if (_drawWireFrames && collisionManager != null)
+                {
+                    foreach(ICollidable coll in collisionManager)
+                    {
+                        if(coll.WireFrame != null)
+                        {
+                            Vector2 drawPosition = coll.Position;
+                            if (coll.Type == ColliderType.CIRCLE_COLLIDER)
+                            {
+                                int offset = (coll as CircleCollider).Bounds.Radius;
+                                drawPosition -= new Vector2(offset, offset);
+                            }
+                            _spriteBatch.Draw(coll.WireFrame, drawPosition, Color.White);
+                        }
+                    }
+                }
+
+                _spriteBatch.End();
             }
         }
 
-        /// <summary>
-        /// Removes an IDrawManageable from the manager
-        /// </summary>
-        /// <param name="toRemove">the IDrawManageable to remove</param>
+        public void DrawWireFrames(CollisionManager collisionManager)
+        {
+            _drawWireFrames = true;
+            this.collisionManager = collisionManager;
+        }
+
+        public void StopDrawingWireFrames()
+        {
+            _drawWireFrames = false;
+            collisionManager = null;
+        }
+
         public void Remove(IDrawManageable toRemove)
         {
-            ThingsToDraw.Remove(toRemove);
+            _thingsToDraw.Remove(toRemove);
+            toRemove.DrawOrderChanged -= DrawOrderChangedHandler;
         }
-
-        /// <summary>
-        /// Sorts the ThingsToDraw list by DrawOrder
-        /// </summary>
+        
         private void SortByUpdateOrder()
         {
-            ThingsToDraw = ThingsToDraw.OrderBy(x => x.DrawOrder).ToList();
+            _thingsToDraw = _thingsToDraw.OrderBy(x => x.DrawOrder).ToList();
         }
 
-        /// <summary>
-        /// enumerates the draw manager for access to the drawmanageables
-        /// </summary>
+        private void DrawOrderChangedHandler(object sender, EventArgs args)
+        {
+            SortByUpdateOrder();
+        }
+
         public IEnumerator GetEnumerator()
         {
-            foreach (IDrawManageable dr in ThingsToDraw)
+            foreach (IDrawManageable dr in _thingsToDraw)
             {
                 yield return dr;
             }

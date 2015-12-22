@@ -1,89 +1,118 @@
 ﻿using Microsoft.Xna.Framework;
+using System;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace AxisEngine.Visuals
 {
-    /// <summary>
-    /// A world object that represents a single sprite
-    /// </summary>
     public class Sprite : WorldObject, IDrawManageable
     {
-        /// <summary>
-        /// Instantiates a sprite
-        /// </summary>
-        /// <param name="texture">The texture that is displayed</param>
+        private Vector2 _offset;
+        private bool _visible;
+        private int _drawOrder;
+
         public Sprite(Texture2D texture)
         {
-            Initialize(texture, Vector2.Zero, Color.White, SpriteEffects.None, Vector2.Zero, 0);
+            Texture = texture;
+            DrawOrder = 0;
+            Color = Color.White;
+            Origin = Vector2.Zero;
+            SpriteEffect = SpriteEffects.None;
+            SourceRectangle = null;
+            DestinationRectangle = null;
+            Visible = true;
+
+            _offset = Vector2.Zero;
         }
 
-        /// <summary>
-        /// Instantiates a sprite
-        /// </summary>
-        /// <param name="texture">The texture that is displayed</param>
-        /// <param name="orgin">The orgin of rotation</param>
-        /// <param name="color">the color tint to apply</param>
-        /// <param name="effect">The effect to apply to the sprite</param>
-        /// <param name="offset">an offset to render the texture at</param>
-        public Sprite(Texture2D texture, Vector2? orgin = null, Color? color = null, SpriteEffects spriteEffect = SpriteEffects.None, Vector2? offset = null, int drawOrder = 0)
+        public event EventHandler<EventArgs> VisibleChanged;
+        public event EventHandler<EventArgs> DrawOrderChanged;
+        
+        public new Vector2 Scale
         {
-            Initialize(texture, orgin ?? Vector2.Zero, color ?? Color.White, spriteEffect, offset ?? Vector2.Zero, drawOrder);
+            get { return base.Scale; }
+            set
+            {
+                base.Scale = value;
+                _offset *= value;
+            }
         }
 
-        /// <summary>
-        /// The order to draw the sprite
-        /// </summary>
-        public int DrawOrder { get; set; }
+        public Rectangle? SourceRectangle { get; set; }
 
-        /// <summary>
-        /// The color tint applied to the texture
-        /// </summary>
+        public Rectangle? DestinationRectangle { get; set; }
+
+        public float LayerDepth
+        {
+            get { return 0; }
+        }
+
+        public Vector2 DrawPosition
+        {
+            get { return Position + _offset; }
+        }
+
+        public int DrawOrder
+        {
+            get { return _drawOrder; }
+            set
+            {
+                _drawOrder = value;
+                if (DrawOrderChanged != null)
+                    DrawOrderChanged(this, EventArgs.Empty);
+            }
+        }
+
         public Color Color { get; set; }
 
-        /// <summary>
-        /// The offset to render the sprite at
-        /// </summary>
-        public Vector2 Offset { get; set; }
+        public Vector2 Origin { get; set; }
 
-        /// <summary>
-        /// The orgin of the sprite with a default of (0, 0)
-        /// </summary>
-        public Vector2 Orgin { get; set; }
-
-        /// <summary>
-        /// The effect to apply to the sprite
-        /// </summary>
         public SpriteEffects SpriteEffect { get; set; }
 
-        /// <summary>
-        /// The texuture that is displayed for the sprite
-        /// </summary>
         public Texture2D Texture { get; set; }
 
-        /// <summary>
-        /// centers the sprite based on the texture's dimensions
-        /// </summary>
-        public void Center()
+        public bool Visible
         {
-            Orgin = new Vector2(Texture.Width * 0.5f, Texture.Height * 0.5f);
+            get { return _visible; }
+            set
+            {
+                _visible = value;
+                if (VisibleChanged != null)
+                    VisibleChanged(this, EventArgs.Empty);
+            }
         }
 
-        /// <summary>
-        /// sets the default values of the sprite
-        /// </summary>
-        /// <param name="texture">The texture that is displayed</param>
-        /// <param name="orgin">The orgin of rotation</param>
-        /// <param name="color">the color tint to apply</param>
-        /// <param name="effect">The effect to apply to the sprite</param>
-        /// <param name="offset">an offset to render the texture at</param>
-        private void Initialize(Texture2D texture, Vector2 orgin, Color color, SpriteEffects effect, Vector2 offset, int drawOrder)
+        public void Offset(Vector2 amount)
         {
-            DrawOrder = drawOrder;
-            Texture = texture;
-            Color = color;
-            Orgin = orgin;
-            SpriteEffect = effect;
-            Offset = offset;
+            _offset = amount;
+        }
+
+        public void Center()
+        {
+            _offset = new Vector2(-Texture.Width * Scale.X * 0.5f, -Texture.Height * Scale.Y * 0.5f);
+        }
+
+        public void Trim(int margin)
+        {
+            SourceRectangle = new Rectangle(margin, margin, Texture.Width - 2 * margin, Texture.Height - 2 * margin);
+        }
+
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw(Texture,
+                             DrawPosition,
+                             DestinationRectangle,
+                             SourceRectangle,
+                             Origin,
+                             Rotation,
+                             Scale,
+                             Color,
+                             SpriteEffect,
+                             LayerDepth);
+        }
+
+        protected override void UpdateThis(GameTime t)
+        {
+            
         }
     }
 }
