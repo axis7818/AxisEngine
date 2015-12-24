@@ -16,7 +16,17 @@ namespace AxisEngine
 
         public Layer(CollisionManager collisionManager, DrawManager drawManager, TimeManager timeManager, params WorldObject[] worldObjects)
         {
-            Initialize(collisionManager, drawManager, timeManager, worldObjects);
+            WorldObjects = new List<WorldObject>();
+
+            CollisionManager = collisionManager;
+            DrawManager = drawManager;
+            TimeManager = timeManager;
+
+            AddRange(worldObjects);
+            SortUpdateOrder();
+
+            Enabled = true;
+            UpdateOrder = 0;
         }
 
         public event EventHandler<EventArgs> EnabledChanged;
@@ -107,21 +117,6 @@ namespace AxisEngine
                 foreach (WorldObject x in WorldObjects)
                     x.Update(scaledTime);
             }
-        }
-
-        protected void Initialize(CollisionManager collisionManager, DrawManager drawManager, TimeManager timeManager, params WorldObject[] worldObjects)
-        {
-            WorldObjects = new List<WorldObject>();
-
-            CollisionManager = collisionManager;
-            DrawManager = drawManager;
-            TimeManager = timeManager;
-
-            AddRange(worldObjects);
-            SortUpdateOrder();
-
-            Enabled = true;
-            UpdateOrder = 0;
         }
 
         private void OnWorldObjectAdded(WorldObject worldObject)

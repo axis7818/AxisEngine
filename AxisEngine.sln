@@ -5,8 +5,6 @@ VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AxisEngine", "AxisEngine\AxisEngine.csproj", "{28034690-B941-4779-ABF8-70F139C6C774}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DoubleKeyMapTest", "DoubleKeyMapTest\DoubleKeyMapTest.csproj", "{2A21E500-97E8-4311-B408-CE59639B868B}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,10 +15,6 @@ Global
 		{28034690-B941-4779-ABF8-70F139C6C774}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{28034690-B941-4779-ABF8-70F139C6C774}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28034690-B941-4779-ABF8-70F139C6C774}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2A21E500-97E8-4311-B408-CE59639B868B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2A21E500-97E8-4311-B408-CE59639B868B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2A21E500-97E8-4311-B408-CE59639B868B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2A21E500-97E8-4311-B408-CE59639B868B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

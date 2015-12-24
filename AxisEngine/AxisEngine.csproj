@@ -75,6 +75,7 @@
     <Compile Include="Visuals\Animation.cs" />
     <Compile Include="Visuals\AnimationEventArgs.cs" />
     <Compile Include="Visuals\Animator.cs" />
+    <Compile Include="Visuals\Camera.cs" />
     <Compile Include="Visuals\DrawManager.cs" />
     <Compile Include="Visuals\IDrawManageable.cs" />
     <Compile Include="Visuals\Sprite.cs" />

@@ -152,8 +152,6 @@ namespace AxisEngine
             {
                 foreach (DrawManager drawer in DrawManagers.Values)
                     drawer.Draw(t);
-
-                
             }
         }
 

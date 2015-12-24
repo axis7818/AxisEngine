@@ -1,5 +1,4 @@
 ﻿using AxisEngine.Physics;
-using AxisEngine.AxisDebug;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -11,6 +10,8 @@ namespace AxisEngine.Visuals
 {
     public class DrawManager : IDrawable, IEnumerable
     {
+        private GraphicsDevice _graphicsDevice;
+
         private int _drawOrder; 
         private bool _visible; 
         private SpriteBatch _spriteBatch;
@@ -23,7 +24,7 @@ namespace AxisEngine.Visuals
         {
             // initialize some members
             _thingsToDraw = new List<IDrawManageable>();
-            GraphicsDevice = graphicsDevice;
+            _graphicsDevice = graphicsDevice;
             _spriteBatch = new SpriteBatch(graphicsDevice);
 
             // set some values
@@ -44,7 +45,10 @@ namespace AxisEngine.Visuals
             }
         }
 
-        public GraphicsDevice GraphicsDevice { get; private set; }
+        public GraphicsDevice GraphicsDevice
+        {
+            get { return _graphicsDevice; }
+        }
 
         public Point ScreenCenter
         {
@@ -89,6 +93,7 @@ namespace AxisEngine.Visuals
             {
                 _spriteBatch.Begin();
 
+                // draw all of the IDrawManageables to the screen
                 foreach(IDrawManageable toDraw in _thingsToDraw)
                 {
                     if (toDraw.Visible)
@@ -97,6 +102,7 @@ namespace AxisEngine.Visuals
                     }
                 }
 
+                // if the draw manager is set to draw the wire frames from a CollisionManager, then draw them
                 if (_drawWireFrames && collisionManager != null)
                 {
                     foreach(ICollidable coll in collisionManager)
@@ -106,6 +112,8 @@ namespace AxisEngine.Visuals
                             Vector2 drawPosition = coll.Position;
                             if (coll.Type == ColliderType.CIRCLE_COLLIDER)
                             {
+                                // circle colliders need to be shifted since circles are located at their 
+                                // center, but the Texture2D is drawn from the upper left corner
                                 int offset = (coll as CircleCollider).Bounds.Radius;
                                 drawPosition -= new Vector2(offset, offset);
                             }
