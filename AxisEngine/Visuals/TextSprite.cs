@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using AxisEngine;
 
 namespace AxisEngine.Visuals
 {
@@ -31,6 +26,16 @@ namespace AxisEngine.Visuals
         public SpriteFont SpriteFont
         {
             get { return _spriteFont; }
+        }
+
+        public Rectangle DrawArea
+        {
+            get
+            {
+                Vector2 bounds = _spriteFont.MeasureString(Text);
+                return new Rectangle((int)Position.X, (int)Position.Y,
+                    (int)bounds.X, (int)bounds.Y);
+            }
         }
 
         public string Text { get; set; }
@@ -59,9 +64,10 @@ namespace AxisEngine.Visuals
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch, Camera camera)
         {
-            spriteBatch.DrawString(SpriteFont, Text, Position, Color);
+            //TODO: test the offset for the camera
+            spriteBatch.DrawString(SpriteFont, Text, Position - camera.Position, Color);
         }
 
         protected override void UpdateThis(GameTime t)

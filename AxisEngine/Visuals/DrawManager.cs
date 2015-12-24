@@ -8,14 +8,14 @@ using System.Linq;
 
 namespace AxisEngine.Visuals
 {
-    public class DrawManager : IDrawable, IEnumerable
+    public class DrawManager : IEnumerable
     {
         private GraphicsDevice _graphicsDevice;
 
         private int _drawOrder; 
         private bool _visible; 
         private SpriteBatch _spriteBatch;
-        private List<IDrawManageable> _thingsToDraw;
+        private List<IDrawManageable> _thingsToDraw = new List<IDrawManageable>();
 
         private CollisionManager collisionManager = null;
         private bool _drawWireFrames = false;
@@ -23,7 +23,6 @@ namespace AxisEngine.Visuals
         public DrawManager(GraphicsDevice graphicsDevice)
         {
             // initialize some members
-            _thingsToDraw = new List<IDrawManageable>();
             _graphicsDevice = graphicsDevice;
             _spriteBatch = new SpriteBatch(graphicsDevice);
 
@@ -87,7 +86,7 @@ namespace AxisEngine.Visuals
             return _thingsToDraw.Contains(test);
         }
         
-        public virtual void Draw(GameTime t)
+        public virtual void Draw(Camera camera)
         {
             if (Visible)
             {
@@ -98,7 +97,7 @@ namespace AxisEngine.Visuals
                 {
                     if (toDraw.Visible)
                     {
-                        toDraw.Draw(_spriteBatch);
+                        toDraw.Draw(_spriteBatch, camera);
                     }
                 }
 

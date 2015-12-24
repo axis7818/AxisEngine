@@ -78,6 +78,14 @@ namespace AxisEngine.Physics
                 colliders.Remove(coll);
             }
         }
+
+        public bool Colliding(ICollidable A, ICollidable B)
+        {
+            if (!collisionMap.ContainsKey(A, B))
+                throw new ArgumentException("The colliders were not found in the CollisionManager");
+
+            return collisionMap.Get(A, B);
+        }
         
         public void Update(GameTime t)
         {

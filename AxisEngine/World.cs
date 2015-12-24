@@ -19,6 +19,9 @@ namespace AxisEngine
         protected GraphicsDevice GraphicsDevice;
         protected List<Layer> Layers;
 
+        protected Dictionary<string, Camera> Cameras;
+        protected string currentCamera = null;
+
         private string _name;
         private int _drawOrder;
         private bool _enabled;
@@ -44,6 +47,11 @@ namespace AxisEngine
         public event EventHandler<EventArgs> UpdateOrderChanged;
         public event EventHandler<EventArgs> VisibleChanged;
         public event EventHandler<WorldChangingEventArgs> EndWorld;
+
+        public Camera ActiveCamera
+        {
+            get { return Cameras[currentCamera]; }
+        }
 
         public string Name
         {
@@ -94,6 +102,41 @@ namespace AxisEngine
         protected abstract void Load();
         protected abstract void Unload();
         
+        public void AddCamera(Camera newCamera)
+        {
+            if (Cameras.ContainsKey(newCamera.Name))
+                throw new ArgumentException("This camera has already been added to the world");
+
+            Cameras[newCamera.Name] = newCamera;
+        }
+
+        public void SetCamera(string name)
+        {
+            if (!Cameras.ContainsKey(name))
+                throw new ArgumentException("The camera, " + name + ", could not be found.");
+
+            currentCamera = name;
+        }
+
+        public string[] GetCameras()
+        {
+            return Cameras.Keys.ToArray();
+        }
+
+        public void RemoveCamera(string name)
+        {
+            Cameras.Remove(name);
+
+            // handle the case where the current camera has been removed
+            if (currentCamera.Equals(name))
+            {
+                string[] cameras = GetCameras();
+                if (cameras.Length <= 0)
+                    throw new InvalidComponentsException("The world has no cameras!");
+                currentCamera = cameras[0];
+            }
+        }
+
         public void Initialize()
         {
             // create the manager objects and layers object
@@ -101,6 +144,12 @@ namespace AxisEngine
             CollisionManagers = new Dictionary<string, CollisionManager>();
             DrawManagers = new Dictionary<string, DrawManager>();
             TimeManagers = new Dictionary<string, TimeManager>();
+
+            // set up the cameras
+            Cameras = new Dictionary<string, Camera>();
+            Camera defaultCamera = new Camera(Camera.DEFAULT_NAME);
+            AddCamera(defaultCamera);
+            currentCamera = defaultCamera.Name;
 
             // turn updating and drawing on
             Enabled = true;
@@ -122,6 +171,10 @@ namespace AxisEngine
             CollisionManagers = null;
             DrawManagers = null;
             TimeManagers = null;
+
+            // remove camera stuff
+            Cameras = null;
+            currentCamera = null;
 
             // turn off updating and drawing
             Enabled = false;
@@ -151,7 +204,7 @@ namespace AxisEngine
             if (Visible)
             {
                 foreach (DrawManager drawer in DrawManagers.Values)
-                    drawer.Draw(t);
+                    drawer.Draw(ActiveCamera);
             }
         }
 

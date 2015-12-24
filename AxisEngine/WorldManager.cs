@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace AxisEngine
 {
+    //TODO: test reloading a world after it has already been loaded once
     public class WorldManager
     {
         private string _defaultWorld;

@@ -1,25 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AxisEngine;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 
 namespace AxisEngine.Visuals
 {
-    public class Camera : WorldObject
+    public class Camera
     {
         /* TODO: THINGS TO ADD
-        panning/zooming/rotating
+        ---
+        panning
         tinting/filters?
         fade in/out
         bounds restrictions
         */
 
-        protected override void UpdateThis(GameTime t)
+        public const string DEFAULT_NAME = "DEFAULT";
+
+        public Vector2 Position = Vector2.Zero;
+
+        private string name;
+
+        public Camera(string name)
         {
-            
+            this.name = name;
+        }
+
+        public string Name
+        {
+            get { return name; }
         }
     }
 }

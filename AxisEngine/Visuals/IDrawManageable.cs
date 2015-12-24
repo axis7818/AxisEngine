@@ -10,29 +10,10 @@ namespace AxisEngine.Visuals
 
         bool Visible { get; }
 
-        void Draw(SpriteBatch spriteBatch);
+        Rectangle DrawArea { get; }
+
+        void Draw(SpriteBatch spriteBatch, Camera camera);
 
         event EventHandler<EventArgs> DrawOrderChanged;
-
-        //Color Color { get; }
-
-        //Vector2 Origin { get; }
-
-        //Vector2 DrawPosition { get; }
-
-        //float Rotation { get; }
-
-        //Vector2 Scale { get; }
-
-        //SpriteEffects SpriteEffect { get; }
-
-        //Texture2D Texture { get; }
-
-        //float LayerDepth { get; }
-
-        //Rectangle? SourceRectangle { get; }
-
-        //Rectangle? DestinationRectangle { get; }
-
     }
 }

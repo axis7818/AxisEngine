@@ -87,6 +87,16 @@ namespace AxisEngine.Visuals
             get { return CurrentAnimation.Height; }
         }
 
+        public Rectangle DrawArea
+        {
+            get
+            {
+                Rectangle bounds = Texture.Bounds;
+                return new Rectangle((int)Position.X, (int)Position.Y,
+                    bounds.Width, bounds.Height);
+            }
+        }
+
         protected override void UpdateThis(GameTime t)
         {
             CurrentAnimation.Update(t);
@@ -105,10 +115,11 @@ namespace AxisEngine.Visuals
             _animations[name] = anim;
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch, Camera camera)
         {
+            //TODO: test the camera offsets
             spriteBatch.Draw(Texture,
-                             DrawPosition,
+                             DrawPosition - camera.Position,
                              DestinationRectangle,
                              SourceRectangle,
                              Origin,
