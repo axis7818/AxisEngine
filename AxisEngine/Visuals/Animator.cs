@@ -124,7 +124,7 @@ namespace AxisEngine.Visuals
                              SourceRectangle,
                              Origin,
                              Rotation,
-                             Scale,
+                             Scale * camera.Zoom,
                              Color,
                              SpriteEffect,
                              LayerDepth);

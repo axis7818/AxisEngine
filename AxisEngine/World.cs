@@ -101,6 +101,7 @@ namespace AxisEngine
         protected abstract void SetUpManagers(GraphicsDevice graphicsDevice);
         protected abstract void Load();
         protected abstract void Unload();
+        protected abstract void UpdateThis(GameTime t);
         
         public void AddCamera(Camera newCamera)
         {
@@ -255,6 +256,8 @@ namespace AxisEngine
 
                 foreach (CollisionManager collisionManager in CollisionManagers.Values)
                     collisionManager.Update(t);
+
+                UpdateThis(t);
             }
 
             if (_end && EndWorld != null)

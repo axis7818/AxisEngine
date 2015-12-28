@@ -8,6 +8,7 @@ using System.Linq;
 
 namespace AxisEngine.Visuals
 {
+    //TODO: remove the drawing functionality from the draw manager and put it into the Cameras.
     public class DrawManager : IEnumerable
     {
         private GraphicsDevice _graphicsDevice;

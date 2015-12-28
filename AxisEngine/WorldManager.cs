@@ -6,15 +6,13 @@ namespace AxisEngine
     //TODO: test reloading a world after it has already been loaded once
     public class WorldManager
     {
-        private string _defaultWorld;
         private string _currentWorld;
         private Dictionary<string, World> _worlds;
 
         public WorldManager(World defaultWorld)
         {
             _worlds = new Dictionary<string, World>();
-            _defaultWorld = defaultWorld.Name;           
-            _currentWorld = _defaultWorld;
+            _currentWorld = defaultWorld.Name;
             AddWorld(defaultWorld);
             CurrentWorld.Initialize();
         }

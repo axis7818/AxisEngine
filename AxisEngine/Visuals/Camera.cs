@@ -15,6 +15,7 @@ namespace AxisEngine.Visuals
         public const string DEFAULT_NAME = "DEFAULT";
 
         public Vector2 Position = Vector2.Zero;
+        public float Zoom = 1;
 
         private string name;
 
