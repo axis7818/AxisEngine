@@ -16,7 +16,7 @@ namespace AxisEngine.Visuals
 
         public const string DEFAULT_NAME = "DEFAULT";
 
-        public Vector2 Position = Vector2.Zero;
+        private Vector2 absolutePosition;
         public float Zoom = 1;
 
         private Viewport viewport;
@@ -28,6 +28,21 @@ namespace AxisEngine.Visuals
             this.name = name;
             this.viewport = viewport;
             enabled = true;
+            Position = Vector2.Zero;
+        }
+
+        public Vector2 Position
+        {
+            get
+            {
+                Vector2 offset = new Vector2(viewport.Width / 2, viewport.Height / 2);
+                return absolutePosition + offset;
+            }
+            set
+            {
+                Vector2 offset = new Vector2(viewport.Width / 2, viewport.Height / 2);
+                absolutePosition = value - offset;
+            }
         }
 
         public string Name
@@ -56,10 +71,6 @@ namespace AxisEngine.Visuals
                     toDraw.Draw(drawManager.SpriteBatch, this);
                 }
             }
-
-#if DEBUG
-            drawManager.DrawWireFrames();
-#endif
         }
     }
 }

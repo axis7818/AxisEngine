@@ -63,6 +63,17 @@ namespace AxisEngine
             }
         }
 
+        public Camera DefaultCamera
+        {
+            get
+            {
+                Camera result = Cameras.First(c => c.Name.Equals(Camera.DEFAULT_NAME));
+                if (result == null)
+                    throw new KeyNotFoundException("could not find the default camera");
+                return result;
+            }
+        }
+
         public bool Enabled
         {
             get { return _enabled; }
@@ -163,19 +174,20 @@ namespace AxisEngine
         {
             if (Visible)
             {
-                //foreach (DrawManager drawer in DrawManagers.Values)
-                //    //TODO: this currently uses just the default, add functionality for switching views
-                //    drawer.Draw(Cameras[Camera.DEFAULT_NAME]);
                 foreach(Camera c in Cameras)
                 {
                     if (c.Enabled)
                     {
+                        GraphicsDevice.Viewport = c.Viewport;
                         foreach(DrawManager drawManager in DrawManagers.Values)
                         {
                             if (drawManager.Visible)
                             {
                                 drawManager.StartDraw();
                                 c.Draw(drawManager);
+#if DEBUG
+                                drawManager.DrawWireFrames();
+#endif
                                 drawManager.EndDraw();
                             }
                         }
