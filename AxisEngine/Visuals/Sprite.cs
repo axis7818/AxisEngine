@@ -70,16 +70,6 @@ namespace AxisEngine.Visuals
 
         public Texture2D Texture { get; set; }
 
-        public Rectangle DrawArea
-        {
-            get
-            {
-                Rectangle bounds = Texture.Bounds;
-                return new Rectangle((int)Position.X, (int)Position.Y,
-                    bounds.Width, bounds.Height);
-            }
-        }
-
         public bool Visible
         {
             get { return _visible; }
@@ -108,7 +98,6 @@ namespace AxisEngine.Visuals
 
         public void Draw(SpriteBatch spriteBatch, Camera camera)
         {
-            //TODO: test the camera offsets
             spriteBatch.Draw(Texture,
                              DrawPosition - camera.Position,
                              DestinationRectangle,
@@ -124,6 +113,12 @@ namespace AxisEngine.Visuals
         protected override void UpdateThis(GameTime t)
         {
             
+        }
+
+        public bool IsViewableTo(Camera camera)
+        {
+            //TODO: implement
+            return true;
         }
     }
 }

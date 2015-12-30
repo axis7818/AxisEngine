@@ -28,16 +28,6 @@ namespace AxisEngine.Visuals
             get { return _spriteFont; }
         }
 
-        public Rectangle DrawArea
-        {
-            get
-            {
-                Vector2 bounds = _spriteFont.MeasureString(Text);
-                return new Rectangle((int)Position.X, (int)Position.Y,
-                    (int)bounds.X, (int)bounds.Y);
-            }
-        }
-
         public string Text { get; set; }
 
         public Color Color { get; set; }
@@ -66,13 +56,18 @@ namespace AxisEngine.Visuals
 
         public void Draw(SpriteBatch spriteBatch, Camera camera)
         {
-            //TODO: test the offset for the camera
             spriteBatch.DrawString(SpriteFont, Text, Position - camera.Position, Color);
         }
 
         protected override void UpdateThis(GameTime t)
         {
             
+        }
+
+        public bool IsViewableTo(Camera camera)
+        {
+            //TODO: implement
+            return true;
         }
 
         public static implicit operator string(TextSprite textSprite)

@@ -8,57 +8,25 @@ using System.Linq;
 
 namespace AxisEngine.Visuals
 {
-    //TODO: remove the drawing functionality from the draw manager and put it into the Cameras.
     public class DrawManager : IEnumerable
     {
-        private GraphicsDevice _graphicsDevice;
+        private int _drawOrder = 0;
+        private bool _visible = true;
+        private bool drawing = false;
+        private List<IDrawManageable> thingsToDraw = new List<IDrawManageable>();
+        private SpriteBatch spriteBatch;
 
-        private int _drawOrder; 
-        private bool _visible; 
-        private SpriteBatch _spriteBatch;
-        private List<IDrawManageable> _thingsToDraw = new List<IDrawManageable>();
-
+        // fields used for drawing wireframes
         private CollisionManager collisionManager = null;
         private bool _drawWireFrames = false;
 
         public DrawManager(GraphicsDevice graphicsDevice)
         {
-            // initialize some members
-            _graphicsDevice = graphicsDevice;
-            _spriteBatch = new SpriteBatch(graphicsDevice);
-
-            // set some values
-            Visible = true;
-            DrawOrder = 0;
+            spriteBatch = new SpriteBatch(graphicsDevice);
         }
-
-        public event EventHandler<EventArgs> DrawOrderChanged;
+        
         public event EventHandler<EventArgs> VisibleChanged;
-
-        public int DrawOrder
-        {
-            get { return _drawOrder; }
-            set
-            {
-                _drawOrder = value;
-                if (DrawOrderChanged != null) DrawOrderChanged(this, new EventArgs());
-            }
-        }
-
-        public GraphicsDevice GraphicsDevice
-        {
-            get { return _graphicsDevice; }
-        }
-
-        public Point ScreenCenter
-        {
-            get { return new Point(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2); }
-        }
-
-        public Point ScreenSize
-        {
-            get { return new Point(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height); }
-        }
+        public event EventHandler<EventArgs> DrawOrderChanged;
 
         public bool Visible
         {
@@ -66,67 +34,128 @@ namespace AxisEngine.Visuals
             set
             {
                 _visible = value;
-                if (VisibleChanged != null) VisibleChanged(this, new EventArgs());
+                OnVisibleChanged();
+            }
+        }
+
+        public int DrawOrder
+        {
+            get { return _drawOrder; }
+            set
+            {
+                _drawOrder = value;
+                if (DrawOrderChanged != null)
+                    DrawOrderChanged(this, EventArgs.Empty);
             }
         }
 
         public int Size
         {
-            get { return _thingsToDraw.Count; }
+            get { return thingsToDraw.Count; }
+        }
+
+        public SpriteBatch SpriteBatch
+        {
+            get { return spriteBatch; }
+        }
+
+        private void OnVisibleChanged()
+        {
+            if (VisibleChanged != null)
+                VisibleChanged(this, EventArgs.Empty);
+
+            if (!_visible && drawing)
+            {
+                EndDraw();
+            }
         }
 
         public void AddDrawable(IDrawManageable toDraw)
         {
-            _thingsToDraw.Add(toDraw);
-            toDraw.DrawOrderChanged += DrawOrderChanged;
-            SortByUpdateOrder();
+            thingsToDraw.Add(toDraw);
+            SortByDrawOrder();
         }
 
         public bool Contains(IDrawManageable test)
         {
-            return _thingsToDraw.Contains(test);
+            return thingsToDraw.Contains(test);
         }
-        
-        public virtual void Draw(Camera camera)
+
+        public void StartDraw()
         {
-            if (Visible)
+            //TODO give drawmanager fields to populate spriteBatch.Begin() with.
+            spriteBatch.Begin();
+            drawing = true;
+        }
+
+        public void EndDraw()
+        {
+            spriteBatch.End();
+            drawing = false;
+        }
+
+//        public virtual void Draw(Camera camera)
+//        {
+//            if (Visible)
+//            {
+//                spriteBatch.Begin(); //TODO give drawmanager fields to populate spriteBatch.Begin() with.
+
+//                // draw all of the IDrawManageables to the screen
+//                foreach (IDrawManageable toDraw in _thingsToDraw)
+//                {
+//                    if (toDraw.Visible && toDraw.IsViewableTo(camera))
+//                    {
+//                        toDraw.Draw(spriteBatch, camera);
+//                    }
+//                }
+
+//#if DEBUG
+//                // if the draw manager is set to draw the wire frames from a CollisionManager, then draw them
+//                if (_drawWireFrames && collisionManager != null)
+//                {
+//                    foreach (ICollidable coll in collisionManager)
+//                    {
+//                        if (coll.WireFrame != null)
+//                        {
+//                            Vector2 drawPosition = coll.Position;
+//                            if (coll.Type == ColliderType.CIRCLE_COLLIDER)
+//                            {
+//                                // circle colliders need to be shifted since circles are located at their 
+//                                // center, but the Texture2D is drawn from the upper left corner
+//                                int offset = (coll as CircleCollider).Bounds.Radius;
+//                                drawPosition -= new Vector2(offset, offset);
+//                            }
+//                            spriteBatch.Draw(coll.WireFrame, drawPosition, Color.White);
+//                        }
+//                    }
+//                }
+//#endif
+
+//                spriteBatch.End();
+//            }
+//        }
+
+        public void DrawWireFrames()
+        {
+            if(_drawWireFrames && collisionManager != null)
             {
-                _spriteBatch.Begin();
-
-                // draw all of the IDrawManageables to the screen
-                foreach(IDrawManageable toDraw in _thingsToDraw)
+                foreach(ICollidable coll in collisionManager)
                 {
-                    if (toDraw.Visible)
+                    if(coll.WireFrame != null)
                     {
-                        toDraw.Draw(_spriteBatch, camera);
-                    }
-                }
-
-                // if the draw manager is set to draw the wire frames from a CollisionManager, then draw them
-                if (_drawWireFrames && collisionManager != null)
-                {
-                    foreach(ICollidable coll in collisionManager)
-                    {
-                        if(coll.WireFrame != null)
+                        Vector2 drawPosition = coll.Position;
+                        if(coll.Type == ColliderType.CIRCLE_COLLIDER)
                         {
-                            Vector2 drawPosition = coll.Position;
-                            if (coll.Type == ColliderType.CIRCLE_COLLIDER)
-                            {
-                                // circle colliders need to be shifted since circles are located at their 
-                                // center, but the Texture2D is drawn from the upper left corner
-                                int offset = (coll as CircleCollider).Bounds.Radius;
-                                drawPosition -= new Vector2(offset, offset);
-                            }
-                            _spriteBatch.Draw(coll.WireFrame, drawPosition, Color.White);
+                            int offset = (coll as CircleCollider).Bounds.Radius;
+                            drawPosition -= new Vector2(offset, offset);
                         }
+                        spriteBatch.Draw(coll.WireFrame, drawPosition, Color.White);
                     }
                 }
-
-                _spriteBatch.End();
             }
         }
 
-        public void DrawWireFrames(CollisionManager collisionManager)
+        public void EnableDrawWireFrames(CollisionManager collisionManager)
         {
             _drawWireFrames = true;
             this.collisionManager = collisionManager;
@@ -140,23 +169,17 @@ namespace AxisEngine.Visuals
 
         public void Remove(IDrawManageable toRemove)
         {
-            _thingsToDraw.Remove(toRemove);
-            toRemove.DrawOrderChanged -= DrawOrderChangedHandler;
+            thingsToDraw.Remove(toRemove);
         }
         
-        private void SortByUpdateOrder()
+        private void SortByDrawOrder()
         {
-            _thingsToDraw = _thingsToDraw.OrderBy(x => x.DrawOrder).ToList();
-        }
-
-        private void DrawOrderChangedHandler(object sender, EventArgs args)
-        {
-            SortByUpdateOrder();
+            thingsToDraw = thingsToDraw.OrderBy(x => x.DrawOrder).ToList();
         }
 
         public IEnumerator GetEnumerator()
         {
-            foreach (IDrawManageable dr in _thingsToDraw)
+            foreach (IDrawManageable dr in thingsToDraw)
             {
                 yield return dr;
             }

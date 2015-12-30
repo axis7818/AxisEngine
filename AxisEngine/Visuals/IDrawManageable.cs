@@ -10,9 +10,9 @@ namespace AxisEngine.Visuals
 
         bool Visible { get; }
 
-        Rectangle DrawArea { get; }
-
         void Draw(SpriteBatch spriteBatch, Camera camera);
+
+        bool IsViewableTo(Camera camera);
 
         event EventHandler<EventArgs> DrawOrderChanged;
     }
