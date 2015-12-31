@@ -56,7 +56,7 @@ namespace AxisEngine.Visuals
 
         public void Draw(SpriteBatch spriteBatch, Camera camera)
         {
-            spriteBatch.DrawString(SpriteFont, Text, Position - camera.Position, Color);
+            spriteBatch.DrawString(SpriteFont, Text, camera.WorldPointToViewportPoint(Position), Color);
         }
 
         protected override void UpdateThis(GameTime t)

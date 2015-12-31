@@ -16,7 +16,7 @@ namespace AxisEngine.Visuals
 
         public const string DEFAULT_NAME = "DEFAULT";
 
-        private Vector2 absolutePosition;
+        private Vector2 absolutePosition; // this is the position of the upper left corner of the viewport in the world
         public float Zoom = 1;
 
         private Viewport viewport;
@@ -28,22 +28,19 @@ namespace AxisEngine.Visuals
             this.name = name;
             this.viewport = viewport;
             enabled = true;
-            Position = Vector2.Zero;
+            Position = ScreenCenter;
         }
 
-        public Vector2 Position
+        public Vector2 Position // this is the position of the center of the viewport in the world
         {
-            get
-            {
-                Vector2 offset = new Vector2(viewport.Width / 2, viewport.Height / 2);
-                return absolutePosition + offset;
-            }
-            set
-            {
-                Vector2 offset = new Vector2(viewport.Width / 2, viewport.Height / 2);
-                absolutePosition = value - offset;
-            }
+            get { return absolutePosition + ScreenCenter; }
+            set { absolutePosition = value - ScreenCenter; }
         }
+
+        public Vector2 ScreenCenter // this is the position of the center of the viewport in the window's coordinates
+        {
+            get { return new Vector2(viewport.Width / 2, viewport.Height / 2); }
+        }    
 
         public string Name
         {
@@ -71,6 +68,16 @@ namespace AxisEngine.Visuals
                     toDraw.Draw(drawManager.SpriteBatch, this);
                 }
             }
+        }
+
+        public Vector2 WorldPointToViewportPoint(Vector2 worldPoint)
+        {
+            return worldPoint - absolutePosition;
+        }
+        
+        public Vector2 ViewportPointToWorldPoint(Vector2 viewportPoint)
+        {
+            return viewportPoint + absolutePosition;
         }
     }
 }

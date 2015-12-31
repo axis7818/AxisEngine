@@ -108,7 +108,7 @@ namespace AxisEngine.Visuals
         public void Draw(SpriteBatch spriteBatch, Camera camera)
         {
             spriteBatch.Draw(Texture,
-                             DrawPosition - camera.Position,
+                             camera.WorldPointToViewportPoint(DrawPosition),
                              DestinationRectangle,
                              SourceRectangle,
                              Origin,
