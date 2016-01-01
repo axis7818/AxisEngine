@@ -66,8 +66,11 @@ namespace AxisEngine.Visuals
 
         public bool IsViewableTo(Camera camera)
         {
-            //TODO: implement
-            return true;
+            Vector2 size = SpriteFont.MeasureString(Text);
+            Rectangle text = new Rectangle((int)size.X, (int)size.Y, (int)Position.X, (int)Position.Y);
+            Rectangle viewport = camera.Viewport.Bounds;
+            viewport.Location = camera.AbsolutePosition.ToPoint();
+            return viewport.Intersects(text);
         }
 
         public static implicit operator string(TextSprite textSprite)

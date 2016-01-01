@@ -79,12 +79,12 @@ namespace AxisEngine.Visuals
 
         public int Width
         {
-            get { return CurrentAnimation.Width; }
+            get { return (int)(CurrentAnimation.Width * Scale.X); }
         }
 
         public int Height
         {
-            get { return CurrentAnimation.Height; }
+            get { return (int)(CurrentAnimation.Height * Scale.Y); }
         }
 
         protected override void UpdateThis(GameTime t)
@@ -148,8 +148,10 @@ namespace AxisEngine.Visuals
 
         public bool IsViewableTo(Camera camera)
         {
-            //TODO: implement
-            return true;
+            Rectangle anim = new Rectangle((int)DrawPosition.X, (int)DrawPosition.Y, Width, Height);
+            Rectangle viewport = camera.Viewport.Bounds;
+            viewport.Location = camera.AbsolutePosition.ToPoint();
+            return viewport.Intersects(anim);
         }
     }
 }

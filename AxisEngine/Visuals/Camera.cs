@@ -31,6 +31,12 @@ namespace AxisEngine.Visuals
             Position = ScreenCenter;
         }
 
+        public Vector2 AbsolutePosition // this is the position of the upper-right of the viewport in the world
+        {
+            get { return absolutePosition; }
+            set { absolutePosition = value; }
+        }
+
         public Vector2 Position // this is the position of the center of the viewport in the world
         {
             get { return absolutePosition + ScreenCenter; }

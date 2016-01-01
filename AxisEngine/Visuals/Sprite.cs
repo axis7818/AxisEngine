@@ -70,6 +70,16 @@ namespace AxisEngine.Visuals
 
         public Texture2D Texture { get; set; }
 
+        public int Width
+        {
+            get { return (int)(Texture.Width * Scale.X); }
+        }
+
+        public int Height
+        {
+            get { return (int)(Texture.Height * Scale.Y); }
+        }
+
         public bool Visible
         {
             get { return _visible; }
@@ -117,8 +127,10 @@ namespace AxisEngine.Visuals
 
         public bool IsViewableTo(Camera camera)
         {
-            //TODO: implement
-            return true;
+            Rectangle sprite = new Rectangle((int)DrawPosition.X, (int)DrawPosition.Y, Width, Height);
+            Rectangle viewport = camera.Viewport.Bounds;
+            viewport.Location = camera.AbsolutePosition.ToPoint();
+            return viewport.Intersects(sprite);
         }
     }
 }
