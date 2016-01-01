@@ -6,17 +6,9 @@ namespace AxisEngine.Visuals
 {
     public class Camera
     {
-        /* TODO: THINGS TO ADD
-        ---
-        panning
-        tinting/filters?
-        fade in/out
-        bounds restrictions
-        */
-
         public const string DEFAULT_NAME = "DEFAULT";
 
-        private Vector2 absolutePosition; // this is the position of the upper left corner of the viewport in the world
+        private Vector2 absolutePosition;
         public float Zoom = 1;
 
         private Viewport viewport;
@@ -31,19 +23,28 @@ namespace AxisEngine.Visuals
             Position = ScreenCenter;
         }
 
-        public Vector2 AbsolutePosition // this is the position of the upper-right of the viewport in the world
+        /// <summary>
+        /// The position of the upper-left of the viewport in the world
+        /// </summary>
+        public Vector2 AbsolutePosition 
         {
             get { return absolutePosition; }
             set { absolutePosition = value; }
         }
 
-        public Vector2 Position // this is the position of the center of the viewport in the world
+        /// <summary>
+        /// The position of the center of the viewport in the world
+        /// </summary>
+        public Vector2 Position 
         {
             get { return absolutePosition + ScreenCenter; }
             set { absolutePosition = value - ScreenCenter; }
         }
 
-        public Vector2 ScreenCenter // this is the position of the center of the viewport in the window's coordinates
+        /// <summary>
+        /// The position of the center of the viewport in the window's coordinates
+        /// </summary>
+        public Vector2 ScreenCenter 
         {
             get { return new Vector2(viewport.Width / 2, viewport.Height / 2); }
         }    

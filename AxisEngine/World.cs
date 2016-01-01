@@ -19,7 +19,8 @@ namespace AxisEngine
         protected GraphicsDevice GraphicsDevice;
         protected List<Layer> Layers;
 
-        private List<Camera> Cameras;
+        private List<Camera> cameras;
+        private Camera defaultCamera;
         
         private string _name;
         private int _drawOrder;
@@ -65,13 +66,7 @@ namespace AxisEngine
 
         public Camera DefaultCamera
         {
-            get
-            {
-                Camera result = Cameras.First(c => c.Name.Equals(Camera.DEFAULT_NAME));
-                if (result == null)
-                    throw new KeyNotFoundException("could not find the default camera");
-                return result;
-            }
+            get { return defaultCamera; }
         }
 
         public bool Enabled
@@ -119,9 +114,9 @@ namespace AxisEngine
             TimeManagers = new Dictionary<string, TimeManager>();
 
             // setup the cameras
-            Cameras = new List<Camera>();
-            Camera defaultCamera = new Camera(Camera.DEFAULT_NAME, GraphicsDevice.Viewport);
-            Cameras.Add(defaultCamera);
+            cameras = new List<Camera>();
+            defaultCamera = new Camera(Camera.DEFAULT_NAME, GraphicsDevice.Viewport);
+            cameras.Add(defaultCamera);
 
             // turn updating and drawing on
             Enabled = true;
@@ -145,7 +140,8 @@ namespace AxisEngine
             TimeManagers = null;
 
             // tear down the viewports
-            Cameras = null;
+            cameras = null;
+            defaultCamera = null;
 
             // turn off updating and drawing
             Enabled = false;
@@ -153,6 +149,30 @@ namespace AxisEngine
 
             // do any custom unloading
             Unload();
+        }
+
+        public void AddCamera(Camera camera)
+        {
+            if (cameras.Any(c => c.Name.Equals(camera.Name)))
+                throw new ArgumentException("A camera with that name already exists.");
+
+            cameras.Add(camera);
+        }
+
+        public void RemoveCamera(Camera camera)
+        {
+
+            cameras.Remove(camera);
+        }
+
+        public bool Contains(Camera camera)
+        {
+            return cameras.Contains(camera);
+        }
+
+        public Camera[] GetCameras()
+        {
+            return cameras.ToArray();
         }
 
         public void AddLayer(Layer layer)
@@ -174,7 +194,7 @@ namespace AxisEngine
         {
             if (Visible)
             {
-                foreach(Camera c in Cameras)
+                foreach(Camera c in cameras)
                 {
                     if (c.Enabled)
                     {
@@ -195,13 +215,7 @@ namespace AxisEngine
                 }
             }
         }
-
-        public void RemoveAllLayersWhere(Predicate<Layer> match)
-        {
-            foreach (Layer layer in Layers.Where(x => match(x)))
-                RemoveLayer(layer);
-        }
-
+        
         public void RemoveLayer(Layer layer)
         {
             if (Layers.Contains(layer))

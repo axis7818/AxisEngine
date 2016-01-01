@@ -82,6 +82,7 @@
     <Compile Include="Visuals\TextSprite.cs" />
     <Compile Include="World.cs" />
     <Compile Include="WorldChangingEventArgs.cs" />
+    <Compile Include="WorldExtensions.cs" />
     <Compile Include="WorldManager.cs" />
     <Compile Include="WorldObject.cs" />
     <Compile Include="WorldObjectEventArgs.cs" />

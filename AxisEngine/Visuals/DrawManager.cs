@@ -83,7 +83,6 @@ namespace AxisEngine.Visuals
 
         public void StartDraw()
         {
-            //TODO give drawmanager fields to populate spriteBatch.Begin() with.
             spriteBatch.Begin();
             drawing = true;
         }
