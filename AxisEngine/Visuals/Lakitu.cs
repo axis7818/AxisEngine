@@ -30,7 +30,7 @@ namespace AxisEngine.Visuals
 
         protected override void UpdateThis(GameTime t)
         {
-            
+                
         }
     }
 }
