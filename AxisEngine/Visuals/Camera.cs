@@ -5,6 +5,9 @@ namespace AxisEngine.Visuals
 {
     public class Camera
     {
+        // TODO: add tinting and filters
+        // TODO: fix how Camera zooming works.
+
         public const string DEFAULT_NAME = "DEFAULT";
 
         private Vector2 absolutePosition;
