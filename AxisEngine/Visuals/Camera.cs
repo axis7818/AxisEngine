@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace AxisEngine.Visuals
@@ -26,7 +25,7 @@ namespace AxisEngine.Visuals
         /// <summary>
         /// The position of the upper-left of the viewport in the world
         /// </summary>
-        public Vector2 AbsolutePosition 
+        public Vector2 AbsolutePosition
         {
             get { return absolutePosition; }
             set { absolutePosition = value; }
@@ -35,7 +34,7 @@ namespace AxisEngine.Visuals
         /// <summary>
         /// The position of the center of the viewport in the world
         /// </summary>
-        public Vector2 Position 
+        public Vector2 Position
         {
             get { return absolutePosition + ScreenCenter; }
             set { absolutePosition = value - ScreenCenter; }
@@ -44,10 +43,10 @@ namespace AxisEngine.Visuals
         /// <summary>
         /// The position of the center of the viewport in the window's coordinates
         /// </summary>
-        public Vector2 ScreenCenter 
+        public Vector2 ScreenCenter
         {
             get { return new Vector2(viewport.Width / 2, viewport.Height / 2); }
-        }    
+        }
 
         public string Name
         {
@@ -68,9 +67,9 @@ namespace AxisEngine.Visuals
 
         public void Draw(DrawManager drawManager)
         {
-            foreach(IDrawManageable toDraw in drawManager)
+            foreach (IDrawManageable toDraw in drawManager)
             {
-                if(toDraw.Visible && toDraw.IsViewableTo(this))
+                if (toDraw.Visible && toDraw.IsViewableTo(this))
                 {
                     toDraw.Draw(drawManager.SpriteBatch, this);
                 }
@@ -81,7 +80,7 @@ namespace AxisEngine.Visuals
         {
             return worldPoint - absolutePosition;
         }
-        
+
         public Vector2 ViewportPointToWorldPoint(Vector2 viewportPoint)
         {
             return viewportPoint + absolutePosition;
